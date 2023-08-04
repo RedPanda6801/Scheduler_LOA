@@ -10,16 +10,16 @@ Frontend는 React JS로 개발 중에 있습니다.
 ## 버전 정보
 
 - Backend
-> Java openjdk version "17.0.5" 2022-10-18 LTS
-> mysql Ver 15.1 Distrib 10.10.2-MariaDB
+-- Java openjdk version "17.0.5" 2022-10-18 LTS
+-- mysql Ver 15.1 Distrib 10.10.2-MariaDB
 
 - Frontend
-> nodeJS v14.20.0
-> npm v6.14.17
+-- nodeJS v14.20.0
+-- npm v6.14.17
 
 - AWS
-> EC2 Ubuntu-22.04-amd64 프리티어
-> EBS Volumes
+-- EC2 Ubuntu-22.04-amd64 프리티어
+-- EBS Volumes
 
 ## Backend
 
