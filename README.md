@@ -27,6 +27,13 @@ Java Spring Boot와 MariaDB로 개발하고 있습니다.
 서버 포트번호는 "8005" 입니다.
 DB 포트번호는 "3006" 입니다.
 
+### DB 세팅
+
+MariaDB 계정과 비밀번호는 "root", "root" 입니다.
+기본 DB 이름은 "scheduleDB"로 하셔야 합니다.
+
+실행 전에 MariaDB 설치 후 "shceduleDB"를 설치하시기 바랍니다.
+
 ### 실행 방법
     
 /src/main/java/com/example/loa/LoaApplication을 실행합니다.
