@@ -52,6 +52,7 @@ ReactJS로 개발하고 있습니다.
 /src/main/frontend 위치에서 다음 코드 실행
 
 ```bash
+npm i
 npm start
 ```
 
