@@ -17,11 +17,11 @@ public class Schedule {
 
     private Boolean kuke;
 
-    private Boolean abrel_12;
+    private Boolean abrel12;
 
-    private Boolean abrel_34;
+    private Boolean abrel34;
 
-    private Boolean abrel_56;
+    private Boolean abrel56;
 
     private Boolean akkan;
 
@@ -32,5 +32,5 @@ public class Schedule {
     private Boolean khamen;
 
     @OneToOne(mappedBy = "schedule")
-    private Character_info character_info;
+    private CharacterInfo characterinfo;
 }
