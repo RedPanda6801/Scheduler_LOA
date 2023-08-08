@@ -65,7 +65,7 @@ public class UserController {
         boolean isCreated = userService.createUser(User.toEntity(userDto));
 
         if(!isCreated){
-            return "failed";
+            return "Create Failed";
         }
         return "success";
     }
