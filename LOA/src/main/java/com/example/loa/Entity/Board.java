@@ -27,7 +27,8 @@ public class Board {
 
     private String card;
 
-    private Integer max_member;
+    @Column(name="max_member", nullable = false)
+    private Integer maxMember;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

@@ -6,20 +6,23 @@ import lombok.Data;
 
 @Entity
 @Data
-public class User_Crew {
+public class CharacterInfo {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Boolean star; // 즐찾 여부
+    @Column(name="char_name", nullable = false)
+    private String charName;
+
+    private Integer level;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user")
+    @JoinColumn(name="user")
     private User user;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "crew")
-    private Crew crew;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "schedule", referencedColumnName = "id")
+    private Schedule schedule;
 }

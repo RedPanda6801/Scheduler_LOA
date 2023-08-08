@@ -15,7 +15,8 @@ public class Apply {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String apply_char;
+    @Column(name="apply_char", nullable = false)
+    private String applyChar;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

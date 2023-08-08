@@ -23,5 +23,5 @@ public class Crew {
     private User user;
 
     @OneToMany(mappedBy = "crew")
-    List<User_Crew> user_crews = new ArrayList<>();
+    List<UserCrew> userCrews = new ArrayList<>();
 }
