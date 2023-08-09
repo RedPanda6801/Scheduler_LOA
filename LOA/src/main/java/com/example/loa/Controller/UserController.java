@@ -20,7 +20,7 @@ public class UserController {
     @ResponseBody
     public UserDto getUser(@PathVariable Integer id){
 
-        Optional<User> userOptional = userService.getUserById(id);  // DB에서 id로 검색
+        Optional<User> userOptional = userService.getById(id);  // DB에서 id로 검색
 
         if(!userOptional.isPresent()) return null;  // 비어있으면 null 리턴
 
@@ -53,20 +53,37 @@ public class UserController {
     @ResponseBody
     public String signUp(@RequestBody UserDto userDto){
 
-        System.out.println(userService.getUserById(1));
         // user의 id로 중복 조회
-        User userTmp = userService.getUserByUserId(userDto.getUserId());
+        User userTmp = userService.getByUserId(userDto.getUserId());
 
         if(userTmp != null) {   // 계정이 있을 경우
             return "Account Already Existed";
         }
 
-
-        boolean isCreated = userService.createUser(User.toEntity(userDto));
+        boolean isCreated = userService.create(User.toEntity(userDto));
 
         if(!isCreated){
             return "Create Failed";
         }
-        return "success";
+        return "Create Success";
     }
+
+    // User 개인정보 수정
+    @PostMapping("/user/update/{id}")
+    @ResponseBody
+    public String updateUser(@PathVariable Integer id, @RequestBody UserDto userDto){
+        boolean isUpdate = userService.update(id, userDto);
+        if(!isUpdate) return "Update Failed";
+        return "Update Success";
+    }
+
+    // User 개인정보 삭제
+    @PostMapping("/user/delete/{id}")
+    @ResponseBody
+    public String deleteUser(@PathVariable Integer id){
+        boolean isDelete = userService.delete(id);
+        if(!isDelete) return "Delete Failed";
+        return "Delete Success";
+    }
+
 }

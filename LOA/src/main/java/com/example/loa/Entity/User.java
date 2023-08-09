@@ -53,4 +53,10 @@ public class User {
                 .server(dto.getServer())
                 .build();
     }
+
+    public void update(String password, String charName, String server){
+        this.password = password;
+        this.charName = charName;
+        this.server = server;
+    }
 }
