@@ -24,6 +24,7 @@ public class UserDto {
         return UserDto.builder()
                 .id(entity.getId())
                 .userId(entity.getUserId())
+                .password(entity.getPassword())
                 .charName(entity.getCharName())
                 .server(entity.getServer())
                 .build();
