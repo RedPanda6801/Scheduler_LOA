@@ -16,7 +16,7 @@ public class UserController {
     private UserService userService;
 
     // User 단일 조회
-    @GetMapping("/user/getUser/{id}")
+    @GetMapping("/api/user/getUser/{id}")
     @ResponseBody
     public UserDto getUser(@PathVariable Integer id){
 
@@ -32,7 +32,7 @@ public class UserController {
     }
 
     // User 로그인
-    @PostMapping("auth/login")
+    @PostMapping("/api/auth/login")
     @ResponseBody
     public String login(@RequestBody UserDto userDto){
 
@@ -49,7 +49,7 @@ public class UserController {
     }
 
     // User 회원가입
-    @PostMapping("/auth/sign") // 회원가입
+    @PostMapping("/api/auth/sign") // 회원가입
     @ResponseBody
     public String signUp(@RequestBody UserDto userDto){
 
@@ -69,7 +69,7 @@ public class UserController {
     }
 
     // User 개인정보 수정
-    @PostMapping("/user/update/{id}")
+    @PostMapping("/api/user/update/{id}")
     @ResponseBody
     public String updateUser(@PathVariable Integer id, @RequestBody UserDto userDto){
         boolean isUpdate = userService.update(id, userDto);
@@ -78,7 +78,7 @@ public class UserController {
     }
 
     // User 개인정보 삭제
-    @PostMapping("/user/delete/{id}")
+    @PostMapping("/api/user/delete/{id}")
     @ResponseBody
     public String deleteUser(@PathVariable Integer id){
         boolean isDelete = userService.delete(id);

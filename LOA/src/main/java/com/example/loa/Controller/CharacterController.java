@@ -20,7 +20,7 @@ public class CharacterController {
     private CharacterService characterService;
 
     private JWTService jwtService = new JWTService();
-    @PostMapping("/character/init")
+    @PostMapping("/api/character/init")
     @ResponseBody
     public String initChar(HttpServletRequest request, @RequestBody List<CharacterInfoDto> characterInfoDtoList){
 
