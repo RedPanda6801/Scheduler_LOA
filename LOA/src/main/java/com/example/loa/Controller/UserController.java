@@ -2,7 +2,10 @@ package com.example.loa.Controller;
 
 import com.example.loa.Dto.UserDto;
 import com.example.loa.Entity.User;
+import com.example.loa.Service.JWTService;
 import com.example.loa.Service.UserService;
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +17,7 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    private JWTService jwtService = new JWTService();
 
     // User 단일 조회
     @GetMapping("/api/user/getUser/{id}")
@@ -78,9 +82,18 @@ public class UserController {
     }
 
     // User 개인정보 삭제
-    @PostMapping("/api/user/delete/{id}")
+    @PostMapping("/api/user/delete")
     @ResponseBody
-    public String deleteUser(@PathVariable Integer id){
+    public String deleteUser(HttpServletRequest request){
+        // 로그인 정보 확인
+        Claims token = jwtService.checkAuthorizationHeader(request);
+        if(token == null){
+            System.out.println("[Error] Token is Missed");
+            return null;
+        }
+        // 유저 확인
+        Integer id = Integer.parseInt(token.get("id").toString());
+
         boolean isDelete = userService.delete(id);
         if(!isDelete) return "Delete Failed";
         return "Delete Success";

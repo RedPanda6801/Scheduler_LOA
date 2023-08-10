@@ -22,12 +22,9 @@ public class CharacterService {
 
         // 각 캐릭터에 user 매핑
         List<CharacterInfo> characters = new ArrayList<>();
+
         for(CharacterInfoDto dto : characterInfoDtoList) {
-            CharacterInfo character = CharacterInfo.builder()
-                    .charName(dto.getCharName())
-                    .level(dto.getLevel())
-                    .user(user)
-                    .build();
+            CharacterInfo character = CharacterInfo.toEntity(dto, user);
             characters.add(character);
         }
 
@@ -39,5 +36,24 @@ public class CharacterService {
             return false;
         }
         return true;
+    }
+
+    public List<CharacterInfoDto> getCharacterByUserId(Integer id){
+
+        List<CharacterInfoDto> characterInfoDtoList = new ArrayList<>();
+        try{
+            // id 값으로 찾기
+            List<CharacterInfo> characterInfosTmp = characterInfoRepository.findAllByUserId(id);
+
+            // entity를 Dto로 변환
+            for(CharacterInfo entity : characterInfosTmp){
+                CharacterInfoDto dto = CharacterInfoDto.toDto(entity);
+                characterInfoDtoList.add(dto);
+            }
+        }catch(Exception e){
+            System.out.println(String.format("[Error] %s",e));
+            return null;
+        }
+        return characterInfoDtoList;
     }
 }
