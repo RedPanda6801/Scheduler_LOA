@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
-import './AuthForm.css';
 
 const SignUp = () => {
-  const [email, setEmail] = useState("");
+  const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
   const [charName, setCharName] = useState("");
   const [server, setServer] = useState("");
@@ -12,7 +11,7 @@ const SignUp = () => {
     e.preventDefault();
     try {
       const response = await axios.post("/api/register", {
-        email,
+        userId,
         password,
         charName,
         server,
@@ -30,9 +29,9 @@ const SignUp = () => {
       <form onSubmit={handleSignUp}>
         <input
           type="text"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          placeholder="User ID"
+          value={userId}
+          onChange={(e) => setUserId(e.target.value)}
         />
         <input
           type="password"
