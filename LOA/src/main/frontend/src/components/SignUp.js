@@ -10,7 +10,7 @@ const SignUp = () => {
   const handleSignUp = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/register", {
+      const response = await axios.post("/api/auth/sign", {
         userId,
         password,
         charName,
