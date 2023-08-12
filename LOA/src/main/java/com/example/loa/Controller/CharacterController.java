@@ -1,8 +1,6 @@
 package com.example.loa.Controller;
 
 import com.example.loa.Dto.CharacterInfoDto;
-import com.example.loa.Entity.CharacterInfo;
-import com.example.loa.Entity.User;
 import com.example.loa.Repository.UserRepository;
 import com.example.loa.Service.CharacterService;
 import com.example.loa.Service.JWTService;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 public class CharacterController {
