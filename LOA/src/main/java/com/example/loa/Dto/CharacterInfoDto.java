@@ -28,8 +28,10 @@ public class CharacterInfoDto {
 
     public static CharacterInfoDto toDto(CharacterInfo entity) {
         return CharacterInfoDto.builder()
+                .id(entity.getId())
                 .charName(entity.getCharName())
                 .level(entity.getLevel())
+                .userId(String.valueOf(entity.getUser().getId()))
                 .build();
     }
 }

@@ -29,6 +29,7 @@ public class CharacterInfo {
     @JoinColumn(name="user")
     private User user;
 
+    @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule", referencedColumnName = "id")
     private Schedule schedule;
