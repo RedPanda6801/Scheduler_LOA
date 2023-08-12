@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface CharacterInfoRepository extends JpaRepository<CharacterInfo, Integer>{
     List<CharacterInfo> findAllByUserId(Integer id);
+
+    CharacterInfo findByCharName(String charName);
 }
