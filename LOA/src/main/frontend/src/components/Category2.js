@@ -2,7 +2,8 @@
 import React from "react";
 
 const Category2 = () => {
-  return <div>크루 관리</div>;
+  return <div>구인구직게시판</div>;
 };
+
 
 export default Category2;
