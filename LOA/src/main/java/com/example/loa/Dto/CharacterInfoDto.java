@@ -1,6 +1,7 @@
 package com.example.loa.Dto;
 
 import com.example.loa.Entity.CharacterInfo;
+import com.example.loa.Entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,4 +25,13 @@ public class CharacterInfoDto {
     private String userId;
 
     private String scheduleId;
+
+    public static CharacterInfoDto toDto(CharacterInfo entity) {
+        return CharacterInfoDto.builder()
+                .id(entity.getId())
+                .charName(entity.getCharName())
+                .level(entity.getLevel())
+                .userId(String.valueOf(entity.getUser().getId()))
+                .build();
+    }
 }

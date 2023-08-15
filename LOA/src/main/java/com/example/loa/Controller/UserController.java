@@ -2,7 +2,10 @@ package com.example.loa.Controller;
 
 import com.example.loa.Dto.UserDto;
 import com.example.loa.Entity.User;
+import com.example.loa.Service.JWTService;
 import com.example.loa.Service.UserService;
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +17,10 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    private JWTService jwtService = new JWTService();
 
     // User 단일 조회
-    @GetMapping("/user/getUser/{id}")
+    @GetMapping("/api/user/getUser/{id}")
     @ResponseBody
     public UserDto getUser(@PathVariable Integer id){
 
@@ -32,7 +36,7 @@ public class UserController {
     }
 
     // User 로그인
-    @PostMapping("auth/login")
+    @PostMapping("/api/auth/login")
     @ResponseBody
     public String login(@RequestBody UserDto userDto){
 
@@ -49,7 +53,7 @@ public class UserController {
     }
 
     // User 회원가입
-    @PostMapping("/auth/sign") // 회원가입
+    @PostMapping("/api/auth/sign") // 회원가입
     @ResponseBody
     public String signUp(@RequestBody UserDto userDto){
 
@@ -69,7 +73,7 @@ public class UserController {
     }
 
     // User 개인정보 수정
-    @PostMapping("/user/update/{id}")
+    @PostMapping("/api/user/update/{id}")
     @ResponseBody
     public String updateUser(@PathVariable Integer id, @RequestBody UserDto userDto){
         boolean isUpdate = userService.update(id, userDto);
@@ -78,9 +82,18 @@ public class UserController {
     }
 
     // User 개인정보 삭제
-    @PostMapping("/user/delete/{id}")
+    @PostMapping("/api/user/delete")
     @ResponseBody
-    public String deleteUser(@PathVariable Integer id){
+    public String deleteUser(HttpServletRequest request){
+        // 로그인 정보 확인
+        Claims token = jwtService.checkAuthorizationHeader(request);
+        if(token == null){
+            System.out.println("[Error] Token is Missed");
+            return null;
+        }
+        // 유저 확인
+        Integer id = Integer.parseInt(token.get("id").toString());
+
         boolean isDelete = userService.delete(id);
         if(!isDelete) return "Delete Failed";
         return "Delete Success";

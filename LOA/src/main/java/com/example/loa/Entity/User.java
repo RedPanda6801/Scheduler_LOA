@@ -2,10 +2,7 @@ package com.example.loa.Entity;
 
 import com.example.loa.Dto.UserDto;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +12,8 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+// 출력 시에 객체 무한 참조를 막기 위한 exclude
+@ToString(exclude = {"characterInfos", "crews", "userCrews", "applies", "boards"})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +30,7 @@ public class User {
     private String server;
 
     @OneToMany(mappedBy = "user")
-    List<CharacterInfo> users = new ArrayList<>();
+    List<CharacterInfo> characterInfos = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     List<Crew> crews = new ArrayList<>();
