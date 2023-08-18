@@ -21,9 +21,6 @@ public class CharacterController {
     @Autowired
     private CharacterService characterService;
 
-    @Autowired
-    private UserRepository userRepository;
-
     private Claims jwtCheckFunc(HttpServletRequest request){
         Claims token = jwtService.checkAuthorizationHeader(request);
         if(token == null){
@@ -77,5 +74,19 @@ public class CharacterController {
 
         if(!isUpdate) return "Update Failed";
         return "Update Succcess";
+    }
+
+    // 캐릭터 단일 수정
+    @PostMapping("api/character/user/update-char")
+    @ResponseBody
+    public String updateUserCharacter(HttpServletRequest request, @RequestBody CharacterInfoDto character){
+        // 유저 정보 확인
+        Claims token = jwtCheckFunc(request);
+        if(token == null) return null;
+
+        // 캐릭터 수정
+        Boolean isUpdated = characterService.updateCharacter(character);
+        if(!isUpdated) return "Update Failed";
+        return "Update Success";
     }
 }

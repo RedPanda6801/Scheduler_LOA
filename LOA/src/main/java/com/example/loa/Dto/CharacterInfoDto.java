@@ -27,6 +27,7 @@ public class CharacterInfoDto {
                 .charName(entity.getCharName())
                 .level(entity.getLevel())
                 .userId(String.valueOf(entity.getUser().getId()))
+                .scheduleId(String.valueOf(entity.getSchedule().getId()))
                 .build();
     }
 }

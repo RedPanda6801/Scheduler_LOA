@@ -54,8 +54,8 @@ public class User {
     }
 
     public void update(String password, String charName, String server){
-        this.password = password;
-        this.charName = charName;
-        this.server = server;
+        this.setPassword(password);
+        this.setCharName(charName);
+        this.setServer(server);
     }
 }

@@ -7,6 +7,8 @@ import com.example.loa.Entity.User;
 import com.example.loa.Repository.CharacterInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -111,6 +113,30 @@ public class CharacterService {
             }else{
                 return false;
             }
+        }catch(Exception e){
+            System.out.println(String.format("[Error] %s", e));
+            return false;
+        }
+    }
+    // 캐릭터 단일 수정
+    @Transactional
+    public Boolean updateCharacter(CharacterInfoDto dto){
+        // 기존 캐릭터 정보 불러오기
+        Optional<CharacterInfo> characterTmp = characterInfoRepository.findById(dto.getId());
+        if(!characterTmp.isPresent()){
+            System.out.println("[Error] Find Character Error");
+            return false;
+        }
+        CharacterInfo character = characterTmp.get();
+        System.out.println(dto);
+        System.out.println(character);
+        // null 값을 기존 값으로 대체
+        Integer level = (dto.getLevel() == null || dto.getLevel() == character.getLevel()) ? character.getLevel() : dto.getLevel();
+        String name = (dto.getCharName() == null || dto.getCharName().equals(character.getCharName())) ? character.getCharName() : dto.getCharName();
+        try{
+            System.out.println(String.format("%d %s", level, name));
+            character.update(name, level);
+            return true;
         }catch(Exception e){
             System.out.println(String.format("[Error] %s", e));
             return false;

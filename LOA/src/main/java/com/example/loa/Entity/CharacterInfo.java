@@ -3,16 +3,14 @@ package com.example.loa.Entity;
 import com.example.loa.Dto.CharacterInfoDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(exclude = {"user", "schedule"})
 public class CharacterInfo {
 
     @Id
@@ -41,5 +39,10 @@ public class CharacterInfo {
                 .schedule(schedule)
                 .user(user)
                 .build();
+    }
+
+    public void update(String charName, Integer level){
+        this.setCharName(charName);
+        this.setLevel(level);
     }
 }

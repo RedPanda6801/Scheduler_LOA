@@ -24,7 +24,6 @@ public class ScheduleService {
         schedule.setSanghatop(false);
         try{
             Schedule result = scheduleRepository.save(schedule);
-            System.out.println(result);
             return result;
         }catch(Exception e){
             System.out.println(String.format("[Error] %s", e));
