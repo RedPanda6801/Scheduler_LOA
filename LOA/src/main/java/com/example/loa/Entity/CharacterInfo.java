@@ -34,10 +34,11 @@ public class CharacterInfo {
     @JoinColumn(name = "schedule", referencedColumnName = "id")
     private Schedule schedule;
 
-    public static CharacterInfo toEntity(CharacterInfoDto dto, User user) {
+    public static CharacterInfo toEntity(CharacterInfoDto dto, User user, Schedule schedule) {
         return CharacterInfo.builder()
                 .charName(dto.getCharName())
                 .level(dto.getLevel())
+                .schedule(schedule)
                 .user(user)
                 .build();
     }

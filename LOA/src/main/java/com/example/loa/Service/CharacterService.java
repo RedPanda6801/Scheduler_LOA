@@ -2,6 +2,7 @@ package com.example.loa.Service;
 
 import com.example.loa.Dto.CharacterInfoDto;
 import com.example.loa.Entity.CharacterInfo;
+import com.example.loa.Entity.Schedule;
 import com.example.loa.Entity.User;
 import com.example.loa.Repository.CharacterInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ public class CharacterService {
     private CharacterInfoRepository characterInfoRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ScheduleService scheduleService;
     public boolean init(Integer id, List<CharacterInfoDto> characterInfoDtoList){
         // user 정보 가져오기
         User user = userService.getById(id).get();
@@ -24,7 +27,8 @@ public class CharacterService {
         List<CharacterInfo> characters = new ArrayList<>();
 
         for(CharacterInfoDto dto : characterInfoDtoList) {
-            CharacterInfo character = CharacterInfo.toEntity(dto, user);
+            Schedule schedule = scheduleService.init();
+            CharacterInfo character = CharacterInfo.toEntity(dto, user, schedule);
             characters.add(character);
         }
 
@@ -95,7 +99,8 @@ public class CharacterService {
             List<CharacterInfo> addCharacters = new ArrayList<>();
             for(CharacterInfoDto character : characters){
                 if(addCharNames.contains(character.getCharName())){
-                    addCharacters.add(CharacterInfo.toEntity(character, userOptional.get()));
+                    Schedule schedule = scheduleService.init();
+                    addCharacters.add(CharacterInfo.toEntity(character, userOptional.get(), schedule));
                 }
             }
             // 추가할 캐릭터를 DB에 추가
