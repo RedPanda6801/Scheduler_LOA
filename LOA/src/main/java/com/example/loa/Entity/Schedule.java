@@ -31,6 +31,6 @@ public class Schedule {
 
     private Boolean khamen;
 
-    @OneToOne(mappedBy = "schedule")
+    @OneToOne(mappedBy = "schedule", cascade = CascadeType.REMOVE)
     private CharacterInfo characterinfo;
 }

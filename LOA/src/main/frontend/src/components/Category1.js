@@ -14,7 +14,6 @@ const Category1 = () => {
                 }
             }
         ).then((response) => {
-            console.log(response.data);
             setCategory2Content((response.data));
         });
     }, []);

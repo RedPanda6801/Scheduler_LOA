@@ -12,7 +12,6 @@ const Category4 = () => {
                   Authorization: `Bearer ${JWT_TOKEN}`
               }
           }).then((response) => {
-              console.log(response.data);
             setUserCharacter(response.data);
           })}, [])
 
