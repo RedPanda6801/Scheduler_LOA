@@ -1,30 +1,42 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
+import axios from "axios";
 
+const JWT_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJyZWRwYW5kYSIsImlhdCI6MTY5MjI1MzQ2MywiZXhwIjoxNjkyMjU1MjYzLCJpZCI6MSwidXNlcklkIjoicHNnNDE2NCJ9.8KV8cXaqg3sAI_rGS9af6ZIhA5kw2gSbYtOb2PIzjTg";
 const Category4 = () => {
-  const characters = ["용준1", "용준2", "용준3"];
+  const [userCharacters, setUserCharacter] = useState([]);
 
-  const [selectedCharacter, setSelectedCharacter] = useState(null);
+  useEffect(() => {
+      axios.get("/api/character/user/get-chars",
+          {
+              headers: {
+                  Authorization: `Bearer ${JWT_TOKEN}`
+              }
+          }).then((response) => {
+            setUserCharacter(response.data);
+          })}, [])
 
   const handleCharacterSelect = (character) => {
-    setSelectedCharacter(character);
+      setUserCharacter(character);
   };
 
   return (
     <div>
-      <h2>크루관리 게시판</h2>
-      <Dropdown characters={characters} onSelect={handleCharacterSelect} />
-      {selectedCharacter && <ContentStatus character={selectedCharacter} />}
+        <h2>크루 관리 게시판</h2>
+
+                <CharacterDiv characters={userCharacters} onSelect={handleCharacterSelect} />
+                {setUserCharacter && <ContentStatus character={setUserCharacter} />}
+
     </div>
   );
 };
 
-const Dropdown = ({ characters, onSelect }) => {
+const CharacterDiv = ({ characters, onSelect }) => {
   return (
     <select onChange={(e) => onSelect(e.target.value)}>
       <option value="">캐릭터를 선택하세요</option>
-      {characters.map((character, index) => (
-        <option key={index} value={character}>
-          {character}
+      {characters.map((character) => (
+        <option key={character.id} value={character.charName}>
+            {character.charName}
         </option>
       ))}
     </select>

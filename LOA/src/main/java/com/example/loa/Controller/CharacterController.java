@@ -1,7 +1,6 @@
 package com.example.loa.Controller;
 
 import com.example.loa.Dto.CharacterInfoDto;
-import com.example.loa.Repository.UserRepository;
 import com.example.loa.Service.CharacterService;
 import com.example.loa.Service.JWTService;
 import io.jsonwebtoken.Claims;
@@ -21,23 +20,13 @@ public class CharacterController {
     @Autowired
     private CharacterService characterService;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    private Claims jwtCheckFunc(HttpServletRequest request){
-        Claims token = jwtService.checkAuthorizationHeader(request);
-        if(token == null){
-            System.out.println("[Error] Token is Missed");
-            return null;
-        }
-        return token;
-    }
     private JWTService jwtService = new JWTService();
+
     @PostMapping("/api/character/init")
     @ResponseBody
-    public String initChar(HttpServletRequest request, @RequestBody List<CharacterInfoDto> characterInfoDtoList){
+    public String initCharacters(HttpServletRequest request, @RequestBody List<CharacterInfoDto> characterInfoDtoList){
         // 로그인 정보 확인
-        Claims token = jwtCheckFunc(request);
+        Claims token = jwtService.jwtCheckFunc(request);
         // 유저 확인
         if(token == null) return null;
         Integer id = Integer.parseInt(token.get("id").toString());
@@ -50,11 +39,11 @@ public class CharacterController {
         return "Init Success";
     }
 
-    @GetMapping("/api/character/user/get-chars")
+    @GetMapping("/api/character/get-chars")
     @ResponseBody
-    public List<CharacterInfoDto> getUserCharacters(HttpServletRequest request){
+    public List<CharacterInfoDto> getCharacters(HttpServletRequest request){
         // 유저 정보 확인
-        Claims token = jwtCheckFunc(request);
+        Claims token = jwtService.jwtCheckFunc(request);
         if(token == null) return null;
         Integer id = Integer.parseInt(token.get("id").toString());
 
@@ -65,17 +54,43 @@ public class CharacterController {
         return characters;
     }
 
-    @PostMapping("/api/character/user/update-chars")
+    @PostMapping("/api/character/change-chars")
     @ResponseBody
-    public String updateUserCharacters(HttpServletRequest request, @RequestBody List<CharacterInfoDto> characters){
+    public String changeCharacters(HttpServletRequest request, @RequestBody List<CharacterInfoDto> characters){
         // 유저 정보 확인
-        Claims token = jwtCheckFunc(request);
+        Claims token = jwtService.jwtCheckFunc(request);
         if(token == null) return null;
         Integer id = Integer.parseInt(token.get("id").toString());
         // 기존 캐릭터들 가져오기
-        boolean isUpdate = characterService.updateCharacters(id, characters);
+        boolean isUpdate = characterService.changeCharacters(id, characters);
 
         if(!isUpdate) return "Update Failed";
         return "Update Succcess";
+    }
+
+    // 캐릭터 단일 수정
+    @PostMapping("api/character/modify-char")
+    @ResponseBody
+    public String modifyCharacter(HttpServletRequest request, @RequestBody CharacterInfoDto character){
+        // 유저 정보 확인
+        Claims token = jwtService.jwtCheckFunc(request);
+        if(token == null) return null;
+
+        // 캐릭터 수정
+        Boolean isUpdated = characterService.modifyCharacter(character);
+        if(!isUpdated) return "Update Failed";
+        return "Update Success";
+    }
+    // 캐릭터 정보 최신화
+    @PostMapping("api/character/update-chars")
+    @ResponseBody
+    public String updateCharacters(HttpServletRequest request, @RequestBody List<CharacterInfoDto> characters){
+        // 유저 정보 확인
+        Claims token = jwtService.jwtCheckFunc(request);
+        if(token == null) return null;
+        // 캐릭터 최신화
+        Boolean isUpdated = characterService.updateCharacters(characters);
+        if(!isUpdated) return "Update Failed";
+        return "Update Success";
     }
 }

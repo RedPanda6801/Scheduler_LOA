@@ -29,7 +29,7 @@ public class User {
 
     private String server;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     List<CharacterInfo> characterInfos = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
@@ -38,10 +38,10 @@ public class User {
     @OneToMany(mappedBy = "user")
     List<UserCrew> userCrews = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     List<Apply> applies = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     List<Board> boards = new ArrayList<>();
 
     public static User toEntity(UserDto dto) {
@@ -54,8 +54,8 @@ public class User {
     }
 
     public void update(String password, String charName, String server){
-        this.password = password;
-        this.charName = charName;
-        this.server = server;
+        this.setPassword(password);
+        this.setCharName(charName);
+        this.setServer(server);
     }
 }

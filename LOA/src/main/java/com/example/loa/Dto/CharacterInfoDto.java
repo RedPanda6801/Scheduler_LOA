@@ -1,11 +1,6 @@
 package com.example.loa.Dto;
 
 import com.example.loa.Entity.CharacterInfo;
-import com.example.loa.Entity.User;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.*;
 
 import java.util.List;
@@ -32,6 +27,7 @@ public class CharacterInfoDto {
                 .charName(entity.getCharName())
                 .level(entity.getLevel())
                 .userId(String.valueOf(entity.getUser().getId()))
+                .scheduleId(String.valueOf(entity.getSchedule().getId()))
                 .build();
     }
 }
