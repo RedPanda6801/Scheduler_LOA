@@ -56,4 +56,13 @@ public class JWTService {
     private String extractToken(String authorizationHeader) {
         return authorizationHeader.substring("Bearer ".length());
     }
+
+    public Claims jwtCheckFunc(HttpServletRequest request){
+        Claims token = checkAuthorizationHeader(request);
+        if(token == null){
+            System.out.println("[Error] Token is Missed");
+            return null;
+        }
+        return token;
+    }
 }

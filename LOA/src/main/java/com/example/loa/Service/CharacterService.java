@@ -63,7 +63,7 @@ public class CharacterService {
         return characterInfoDtoList;
     }
 
-    public boolean updateCharacters(Integer id, List<CharacterInfoDto> characters){
+    public boolean changeCharacters(Integer id, List<CharacterInfoDto> characters){
         // 캐릭터에 매핑할 유저 조회
         Optional<User> userOptional = userService.getById(id);
         if(!userOptional.isPresent()) {
@@ -120,7 +120,7 @@ public class CharacterService {
     }
     // 캐릭터 단일 수정
     @Transactional
-    public Boolean updateCharacter(CharacterInfoDto dto){
+    public Boolean modifyCharacter(CharacterInfoDto dto){
         // 기존 캐릭터 정보 불러오기
         Optional<CharacterInfo> characterTmp = characterInfoRepository.findById(dto.getId());
         if(!characterTmp.isPresent()){
@@ -128,14 +128,47 @@ public class CharacterService {
             return false;
         }
         CharacterInfo character = characterTmp.get();
-        System.out.println(dto);
-        System.out.println(character);
+
         // null 값을 기존 값으로 대체
         Integer level = (dto.getLevel() == null || dto.getLevel() == character.getLevel()) ? character.getLevel() : dto.getLevel();
         String name = (dto.getCharName() == null || dto.getCharName().equals(character.getCharName())) ? character.getCharName() : dto.getCharName();
         try{
-            System.out.println(String.format("%d %s", level, name));
             character.update(name, level);
+            return true;
+        }catch(Exception e){
+            System.out.println(String.format("[Error] %s", e));
+            return false;
+        }
+    }
+
+    @Transactional
+    public Boolean updateCharacters(List<CharacterInfoDto> dtos){
+        List<CharacterInfo> charArr = new ArrayList<>();
+        List<CharacterInfoDto> changeArr = new ArrayList<>();
+        for(CharacterInfoDto dto : dtos){
+            // 형식에 맞지 않는 dto에 대한 예외처리
+            if(dto.getCharName() == null || dto.getLevel() == null){
+                System.out.println(String.format("[Error] Data Empty Error"));
+            }
+            // 현재 캐릭터들의 정보 찾기
+            Optional<CharacterInfo> charTmp = characterInfoRepository.findById(dto.getId());
+            if(!charTmp.isPresent()){
+                System.out.println(String.format("[Alert] No Character : %s", dto.getCharName()));
+            }else{
+                CharacterInfo charElement = charTmp.get();
+                // 값이 변하지 않은 것은 수정 X
+                if(!charElement.getCharName().equals(dto.getCharName()) || charElement.getLevel() != dto.getLevel()){
+                    charArr.add(charElement);
+                    changeArr.add(dto);
+                }
+            }
+        }
+        try{
+            // 필터된 엔티티들을 update
+            for(int i = 0; i < charArr.size(); i++){
+                CharacterInfoDto newObject = changeArr.get(i);
+                charArr.get(i).update(newObject.getCharName(), newObject.getLevel());
+            }
             return true;
         }catch(Exception e){
             System.out.println(String.format("[Error] %s", e));

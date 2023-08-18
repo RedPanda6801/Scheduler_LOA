@@ -1,9 +1,12 @@
 package com.example.loa.Service;
 
+import com.example.loa.Dto.ScheduleDto;
 import com.example.loa.Entity.Schedule;
 import com.example.loa.Repository.ScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ScheduleService {
@@ -25,6 +28,16 @@ public class ScheduleService {
         try{
             Schedule result = scheduleRepository.save(schedule);
             return result;
+        }catch(Exception e){
+            System.out.println(String.format("[Error] %s", e));
+            return null;
+        }
+    }
+    public Boolean checkSchedule(ScheduleDto dto, Integer id){
+
+
+        try{
+            return true;
         }catch(Exception e){
             System.out.println(String.format("[Error] %s", e));
             return null;
