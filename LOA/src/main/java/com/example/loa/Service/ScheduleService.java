@@ -69,13 +69,11 @@ public class ScheduleService {
             Schedule deleteData = character.getSchedule();
             // 연관관계 삭제
             character.setSchedule(null);
-            System.out.println(deleteData);
-            scheduleRepository.delete(deleteData);
             // 스캐줄 Entity 재생성 및 연관관계 생성
             Schedule initSchedule = init();
-            System.out.println(initSchedule);
             character.setSchedule(initSchedule);
-            System.out.println(character);
+            // 데이터 삭제
+            scheduleRepository.delete(deleteData);
         }
         return true;
     }
