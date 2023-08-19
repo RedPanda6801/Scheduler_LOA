@@ -64,6 +64,8 @@ public class CharacterService {
     }
 
     public boolean changeCharacters(Integer id, List<CharacterInfoDto> characters){
+        Boolean isDeleted = false;
+
         // 캐릭터에 매핑할 유저 조회
         Optional<User> userOptional = userService.getById(id);
         if(!userOptional.isPresent()) {
@@ -92,10 +94,7 @@ public class CharacterService {
             // 제외된 데이터 삭제 및 예외처리
             if(deleteIds.size() > 0) {
                 characterInfoRepository.deleteAllById(deleteIds);
-            }else{
-                // 추가할 데이터가 없으면 알림을 보내고 성공처리
-                System.out.println("[Alert] No data Changed");
-                return true;
+                isDeleted = true;
             }
             // 추가된 캐릭터들의 Dto를 Entity로 변환
             List<CharacterInfo> addCharacters = new ArrayList<>();
@@ -111,7 +110,15 @@ public class CharacterService {
                 System.out.println("[Alert] Update Success");
                 return true;
             }else{
-                return false;
+                if(isDeleted)
+                {
+                    System.out.println("[Alert] Update Success");
+                    return true;
+                }
+                else {
+                    System.out.println("[Alert] No data Changed");
+                    return false;
+                }
             }
         }catch(Exception e){
             System.out.println(String.format("[Error] %s", e));

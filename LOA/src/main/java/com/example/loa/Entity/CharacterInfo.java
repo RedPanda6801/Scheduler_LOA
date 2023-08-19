@@ -28,7 +28,7 @@ public class CharacterInfo {
     private User user;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "schedule", referencedColumnName = "id")
     private Schedule schedule;
 

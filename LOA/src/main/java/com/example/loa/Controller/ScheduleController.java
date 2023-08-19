@@ -25,10 +25,23 @@ public class ScheduleController {
         // 유저 확인
         Claims token = jwtService.jwtCheckFunc(request);
         if(token == null) return null;
-        Integer userId = Integer.parseInt(token.get("id").toString());
 
-        Boolean isChecked = scheduleService.checkSchedule(dto, userId);
+        Boolean isChecked = scheduleService.checkSchedule(dto);
         if(!isChecked) return "Check Failed";
         return "Check Success";
+    }
+
+    @PostMapping("/api/schedule/reset")
+    @ResponseBody
+    public String resetSchedule(HttpServletRequest request){
+        // 유저 확인
+        Claims token = jwtService.jwtCheckFunc(request);
+        if(token == null) return null;
+
+        Integer userId = Integer.parseInt(token.get("id").toString());
+
+        Boolean isReset = scheduleService.resetSchedule(userId);
+        if(!isReset) return "Reset Failed";
+        return "Reset Success";
     }
 }

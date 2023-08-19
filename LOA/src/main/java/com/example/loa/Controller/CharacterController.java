@@ -61,9 +61,8 @@ public class CharacterController {
         Claims token = jwtService.jwtCheckFunc(request);
         if(token == null) return null;
         Integer id = Integer.parseInt(token.get("id").toString());
-        // 기존 캐릭터들 가져오기
-        boolean isUpdate = characterService.changeCharacters(id, characters);
 
+        boolean isUpdate = characterService.changeCharacters(id, characters);
         if(!isUpdate) return "Update Failed";
         return "Update Succcess";
     }
