@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 
-const JWT_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJyZWRwYW5kYSIsImlhdCI6MTY5MjI1MzQ2MywiZXhwIjoxNjkyMjU1MjYzLCJpZCI6MSwidXNlcklkIjoicHNnNDE2NCJ9.8KV8cXaqg3sAI_rGS9af6ZIhA5kw2gSbYtOb2PIzjTg";
+const JWT_TOKEN = localStorage.getItem("token");
 const Category4 = () => {
   const [userCharacters, setUserCharacter] = useState([]);
 
   useEffect(() => {
-      axios.get("/api/character/user/get-chars",
+      axios.get("/api/character/get-chars",
           {
               headers: {
                   Authorization: `Bearer ${JWT_TOKEN}`
@@ -34,11 +34,11 @@ const CharacterDiv = ({ characters, onSelect }) => {
   return (
     <select onChange={(e) => onSelect(e.target.value)}>
       <option value="">캐릭터를 선택하세요</option>
-      {characters.map((character) => (
+      {Array.isArray(characters) ? characters.map((character) => (
         <option key={character.id} value={character.charName}>
             {character.charName}
         </option>
-      ))}
+      )) : null}
     </select>
   );
 };

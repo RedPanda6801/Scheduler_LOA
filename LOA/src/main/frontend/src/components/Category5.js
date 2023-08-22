@@ -7,16 +7,18 @@ const Category4 = () => {
   const [selectedCrewMember, setSelectedCrewMember] = useState("");
   const [contentProgress, setContentProgress] = useState("");
 
+  const token = localStorage.getItem("token");
+
   const handleCreateCrew = () => {
     // crew api 따로 적용 할것인지..?
     // 적용 안하면 Post쪽 바꿔야돼
     axios
       .post(
-        "URL/api/crew/create",
+        "/api/crew/create",
         {},
         {
           headers: {
-            Authorization: `Bearer YOUR_JWT_TOKEN`,
+            Authorization: `Bearer ${token}`,
           },
         }
       )
@@ -43,9 +45,9 @@ const Category4 = () => {
   const handleCrewMemberClick = (crewMember) => {
     // 클릭 시 나오는 것들
     axios
-      .get(`URL/api/crew/${crewMember}/content-progress`, {
+      .get(`/api/crew/${crewMember}/content-progress`, {
         headers: {
-          Authorization: `Bearer YOUR_JWT_TOKEN`,
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {

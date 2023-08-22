@@ -12,7 +12,7 @@ const SignIn = () => {
         userId,
         password,
       });
-
+      localStorage.setItem("token", response.data);
       console.log("User signed in:", response.data);
     } catch (error) {
       console.error("Error signing in:", error);

@@ -5,17 +5,23 @@ import axios from "axios";
 const Category3 = () => {
   const [scheduleCheckResult, setScheduleCheckResult] = useState("");
   const [resetResult, setResetResult] = useState("");
-
+  const JWT_TOKEN = localStorage.getItem("token");
   const handleScheduleCheck = () => {
     // api 불러오기가 일단 되는지 확인
     // 데이터값 적용되나?
+    let body = {
+        "id" : 16,
+        "valtan" : true,
+        "biakiss" : true,
+        "akkan" : true
+    };
     axios
       .post(
-        "URL/api/schedule/check",
-        {},
+        "/api/schedule/check",
+        body,
         {
           headers: {
-            Authorization: `Bearer YOUR_JWT_TOKEN`,
+            Authorization: `Bearer ${JWT_TOKEN}`,
           },
         }
       )
@@ -32,11 +38,11 @@ const Category3 = () => {
     // 초기화 되는지 확인
     axios
       .post(
-        "URL/api/schedule/reset",
+        "/api/schedule/reset",
         {},
         {
           headers: {
-            Authorization: `Bearer YOUR_JWT_TOKEN`,
+            Authorization: `Bearer ${JWT_TOKEN}`,
           },
         }
       )

@@ -10,6 +10,8 @@ const MyPage = () => {
   const [updateResult, setUpdateResult] = useState("");
   const [deleteResult, setDeleteResult] = useState("");
 
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -58,7 +60,7 @@ const MyPage = () => {
         {},
         {
           headers: {
-            Authorization: `Bearer YOUR_JWT_TOKEN`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
