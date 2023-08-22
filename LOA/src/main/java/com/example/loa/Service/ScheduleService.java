@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -81,5 +82,24 @@ public class ScheduleService {
             System.out.println(String.format("[Error] %s", e));
             return false;
         }
+    }
+
+    public List<ScheduleDto> getUserSchedule(List<Integer> ids){
+        // 유저 정보로 캐릭터 가져오기
+        List<ScheduleDto> dtos = new ArrayList<>();
+        try{
+            for(Integer id : ids){
+                Optional<CharacterInfo> character = characterInfoRepository.findById(id);
+                Schedule schedule = character.get().getSchedule();
+                dtos.add(ScheduleDto.toDto(schedule));
+            }
+        }catch(Exception e){
+            System.out.println(String.format("[Error] %s",e));
+            return null;
+        }
+        if(dtos.size() == 0){
+            System.out.println("[Alert] No Data Existed");
+        }
+        return dtos;
     }
 }
