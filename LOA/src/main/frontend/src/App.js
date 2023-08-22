@@ -10,6 +10,7 @@ import Category4 from "./components/Category4";
 import Category5 from "./components/Category5";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
+import FigmaTest from "./components/figmaTest";
 
 const App = () => {
   return (
@@ -24,6 +25,7 @@ const App = () => {
         <Route path="/category5" element={<Category5 />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/figma" element={<FigmaTest/>} />
       </Routes>
     </Router>
   );

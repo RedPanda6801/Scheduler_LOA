@@ -1,7 +1,10 @@
 /* Navbar.css */
 .navbar {
+  border-radius: 5px;
+  margin: 20px 100px 0px 100px;
   background-color: #333;
   padding: 10px 0;
+  justify-content: center;
 }
 
 .nav-list {

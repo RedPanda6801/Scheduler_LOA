@@ -10,7 +10,7 @@ public class MainController {
     @GetMapping("/api/hello")
     @ResponseBody
     public String test(Model model){
-        return "test data";
+        return "This is Spring's Data";
     }
 
 }

@@ -72,27 +72,41 @@ const Category1 = () => {
   };
 
   return (
-    <div>
-      {category2Content.map((data, index) => {
-        if (index > 5) return;
-        return (
-          <div key={index}>
-            <p>{data.Title}</p>
-            <a href={data.Link}>링크</a>
-          </div>
-        );
-      })}
-      <h2>모험 섬 정보</h2>
-      {calendarContent.map((data, index) => {
-        if (index > 5) return;
-        return (
-          <div key={index}>
-            <p>{data.ContentsName}</p>
-          </div>
-        );
-      })}
-      <Link to="/">홈으로 가기</Link>
-      <form onSubmit={handleNoticeSubmit}>
+    <div className="main-container">
+      <div className="event-container"></div>
+      <div className="island-container"></div>
+    </div>
+  );
+};
+
+export default Category1;
+
+/*
+<div className="main-container">
+  <div className="event-container">
+    {category2Content.map((data, index) => {
+      if (index > 5) return;
+      return (
+        <div k  ey={index} className="event-div">
+          <p>{data.Title}</p>
+          <a href={data.Link}>링크</a>
+        </div>
+      );
+    })}
+  </div>
+  <div className="island-container">
+    <h2>모험 섬 정보</h2>
+    {calendarContent.map((data, index) => {
+      if (index > 5) return;
+      return (
+        <div key={index}>
+          <p>{data.ContentsName}</p>
+        </div>
+      );
+    })}
+  </div>
+  <Link to="/">홈으로 가기</Link>
+  <form onSubmit={handleNoticeSubmit}>
         <textarea
           value={notice}
           onChange={(e) => setNotice(e.target.value)}
@@ -100,10 +114,6 @@ const Category1 = () => {
           rows="4"
           cols="50"
         />
-        <button type="submit">작성</button>
-      </form>
-    </div>
-  );
-};
-
-export default Category1;
+    <button type="submit">작성</button>
+  </form>
+</div>*/

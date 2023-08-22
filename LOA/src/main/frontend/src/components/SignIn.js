@@ -13,6 +13,7 @@ const SignIn = () => {
         userId,
         password,
       });
+      console.log("heloo");
       alert("로그인 성공");
       const result = response.data.data.split(" ");
       localStorage.setItem("token", result[0]);

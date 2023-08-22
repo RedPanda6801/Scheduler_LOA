@@ -330,41 +330,6 @@ const Category3 = () => {
           <p>Check to Login</p>
         )}
       </Accordion>
-
-      {/* 안쓰는 코드*/}
-      {/*<form onSubmit={handleScheduleCheck}>
-        <input
-          type="text"
-          placeholder="check Character's Id"
-          value={characterId}
-          onChange={(e) => setCharacterId(e.target.value)}
-        />
-        <button type="submit">스케쥴 체킹</button>
-      </form>
-      <p>{resetResult}</p>*/}
-
-      {/* 이 스케줄 조회도 우선은 필요 없어 보인다. => 위에서 조회 및 체크, 초기설정 다 하기 때문
-      <div>
-        <h2>캐릭터 스케줄 조회</h2>
-        <input
-          type="text"
-          placeholder="캐릭터 이름"
-          value={selectedCharacter}
-          onChange={(e) => setSelectedCharacter(e.target.value)}
-        />
-        <button onClick={handleGetCharacterSchedule}>조회</button>
-        {characterScheduleData && (
-          <div>
-            <h3>{characterScheduleData.CharacterName} 스케줄</h3>
-            <p>서버: {characterScheduleData.ServerName}</p>
-            <p>레벨: {characterScheduleData.CharacterLevel}</p>
-            <p>직업: {characterScheduleData.CharacterClassName}</p>
-            <p>평균 아이템 레벨: {characterScheduleData.ItemAvgLevel}</p>
-            <p>최대 아이템 레벨: {characterScheduleData.ItemMaxLevel}</p>
-          </div>
-        )}
-      </div>
-      */}
     </div>
   );
 };
