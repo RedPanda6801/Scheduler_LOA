@@ -44,13 +44,13 @@ public class CharacterService {
         return true;
     }
 
+    // 개인 케릭터 및 스케줄 조회
     public List<CharacterInfoDto> getCharacterByUserId(Integer id){
 
         List<CharacterInfoDto> characterInfoDtoList = new ArrayList<>();
         try{
             // id 값으로 찾기
             List<CharacterInfo> characterInfosTmp = characterInfoRepository.findAllByUserId(id);
-
             // entity를 Dto로 변환
             for(CharacterInfo entity : characterInfosTmp){
                 CharacterInfoDto dto = CharacterInfoDto.toDto(entity);

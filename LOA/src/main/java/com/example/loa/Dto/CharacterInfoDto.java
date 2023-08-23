@@ -21,13 +21,15 @@ public class CharacterInfoDto {
 
     private String scheduleId;
 
+    private ScheduleDto scheduleDto;
+
     public static CharacterInfoDto toDto(CharacterInfo entity) {
         return CharacterInfoDto.builder()
                 .id(entity.getId())
                 .charName(entity.getCharName())
                 .level(entity.getLevel())
                 .userId(String.valueOf(entity.getUser().getId()))
-                .scheduleId(String.valueOf(entity.getSchedule().getId()))
+                .scheduleDto(ScheduleDto.toDto(entity.getSchedule()))
                 .build();
     }
 }
