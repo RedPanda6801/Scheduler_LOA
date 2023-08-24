@@ -3,8 +3,6 @@ package com.example.loa.Dto;
 import com.example.loa.Entity.CharacterInfo;
 import lombok.*;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,7 +17,7 @@ public class CharacterInfoDto {
 
     private String userId;
 
-    private String scheduleId;
+    private String job;
 
     private ScheduleDto scheduleDto;
 
@@ -28,6 +26,7 @@ public class CharacterInfoDto {
                 .id(entity.getId())
                 .charName(entity.getCharName())
                 .level(entity.getLevel())
+                .job(entity.getJob())
                 .userId(String.valueOf(entity.getUser().getId()))
                 .scheduleDto(ScheduleDto.toDto(entity.getSchedule()))
                 .build();

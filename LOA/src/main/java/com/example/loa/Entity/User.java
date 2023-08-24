@@ -60,4 +60,7 @@ public class User {
         this.setCharName(charName);
         this.setServer(server);
     }
+    public void setKey(String key){
+        this.setApi(key);
+    }
 }

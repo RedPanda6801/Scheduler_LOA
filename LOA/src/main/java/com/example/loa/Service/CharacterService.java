@@ -23,16 +23,31 @@ public class CharacterService {
     private ScheduleService scheduleService;
     public boolean init(Integer id, List<CharacterInfoDto> characterInfoDtoList){
         // user 정보 가져오기
-        User user = userService.getById(id).get();
+        Optional<User> userTmp = userService.getById(id);
+        if(!userTmp.isPresent()) {
+            System.out.println("[Error] No User Existed");
+            return false;
+        }
+        User user = userTmp.get();
 
         // 각 캐릭터에 user 매핑
         List<CharacterInfo> characters = new ArrayList<>();
-
-        for(CharacterInfoDto dto : characterInfoDtoList) {
-            Schedule schedule = scheduleService.init();
-            CharacterInfo character = CharacterInfo.toEntity(dto, user, schedule);
-            characters.add(character);
+        try{
+            for(CharacterInfoDto dto : characterInfoDtoList) {
+                // dto 내용 검사
+                if(dto.getLevel() == null || dto.getJob() == null || dto.getCharName() == null){
+                    System.out.println(String.format("[Error] Data Empty Error"));
+                    return false;
+                }
+                Schedule schedule = scheduleService.init();
+                CharacterInfo character = CharacterInfo.toEntity(dto, user, schedule);
+                characters.add(character);
+            }
+        }catch(Exception e){
+            System.out.println(String.format("[Error] %s",e));
+            return false;
         }
+
 
         // 매핑한 캐릭터 DB에 저장
         try{
@@ -63,17 +78,23 @@ public class CharacterService {
         return characterInfoDtoList;
     }
 
+    // 검색 방법 수정 필요
     public boolean changeCharacters(Integer id, List<CharacterInfoDto> characters){
         // 캐릭터에 매핑할 유저 조회
         Optional<User> userOptional = userService.getById(id);
         if(!userOptional.isPresent()) {
-            System.out.println("[Error] No User Error");
+            System.out.println("[Error] No User Existed");
             return false;
         }
         List<CharacterInfoDto> originCharacters = getCharacterByUserId(id);
         // 갱신할 캐릭터들 List 생성
         List<String> addCharNames = new ArrayList<>();
         for(CharacterInfoDto dto : characters){
+            // 부족한 정보에 대한 예외처리
+            if(dto.getCharName() == null || dto.getJob() == null || dto.getLevel() == null){
+                System.out.println("[Error] Data Empty Error");
+                return false;
+            }
             addCharNames.add(dto.getCharName());
         }
 
@@ -129,11 +150,12 @@ public class CharacterService {
         }
         CharacterInfo character = characterTmp.get();
 
-        // null 값을 기존 값으로 대체
-        Integer level = (dto.getLevel() == null || dto.getLevel() == character.getLevel()) ? character.getLevel() : dto.getLevel();
-        String name = (dto.getCharName() == null || dto.getCharName().equals(character.getCharName())) ? character.getCharName() : dto.getCharName();
+        // 값 수정
         try{
-            character.update(name, level);
+            Integer level = dto.getLevel();
+            String name = dto.getCharName();
+            String job = dto.getJob();
+            character.update(name, level, job);
             return true;
         }catch(Exception e){
             System.out.println(String.format("[Error] %s", e));
@@ -143,11 +165,12 @@ public class CharacterService {
 
     @Transactional
     public Boolean updateCharacters(List<CharacterInfoDto> dtos){
+        // 배열 선언
         List<CharacterInfo> charArr = new ArrayList<>();
         List<CharacterInfoDto> changeArr = new ArrayList<>();
         for(CharacterInfoDto dto : dtos){
             // 형식에 맞지 않는 dto에 대한 예외처리
-            if(dto.getCharName() == null || dto.getLevel() == null){
+            if(dto.getCharName() == null || dto.getLevel() == null || dto.getJob() == null){
                 System.out.println(String.format("[Error] Data Empty Error"));
             }
             // 현재 캐릭터들의 정보 찾기
@@ -167,7 +190,7 @@ public class CharacterService {
             // 필터된 엔티티들을 update
             for(int i = 0; i < charArr.size(); i++){
                 CharacterInfoDto newObject = changeArr.get(i);
-                charArr.get(i).update(newObject.getCharName(), newObject.getLevel());
+                charArr.get(i).update(newObject.getCharName(), newObject.getLevel(), newObject.getJob());
             }
             return true;
         }catch(Exception e){

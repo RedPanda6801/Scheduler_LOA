@@ -1,14 +1,20 @@
 package com.example.loa.Entity;
 
+import com.example.loa.Dto.CrewDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
 @Data
+@Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+// 출력 시에 객체 무한 참조를 막기 위한 exclude
+@ToString(exclude = {"userCrews","user"})
 public class Crew {
 
     @Id
@@ -24,4 +30,11 @@ public class Crew {
 
     @OneToMany(mappedBy = "crew")
     List<UserCrew> userCrews = new ArrayList<>();
+
+    public static Crew toEntity(CrewDto dto, User user){
+        return Crew.builder()
+                .name(dto.getName())
+                .user(user)
+                .build();
+    }
 }

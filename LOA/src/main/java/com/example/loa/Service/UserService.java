@@ -118,5 +118,34 @@ public class UserService {
         return true;
     }
 
+    @Transactional
+    public boolean setKey(String key, String id){
+        try{
+            Optional<User> userTmp = userRepository.findById(Integer.parseInt(id));
+            if(!userTmp.isPresent()){
+                System.out.println("[Error] User doesn't Existed");
+                return false;
+            }
+            User user = userTmp.get();
+            user.setKey(key);
+        }catch(Exception e){
+            System.out.println(String.format("[Error] %s", e));
+            return false;
+        }
+        return true;
+    }
 
+    public String getKey(String id){
+        try{
+            // 유저 정보 가져오기
+            Optional<User> userTmp = getById(Integer.parseInt(id));
+            if(!userTmp.isPresent()) return null;
+            User user = userTmp.get();
+
+            return user.getApi();
+        }catch(Exception e) {
+            System.out.println(String.format("[Error] %s", e));
+            return null;
+        }
+    }
 }
