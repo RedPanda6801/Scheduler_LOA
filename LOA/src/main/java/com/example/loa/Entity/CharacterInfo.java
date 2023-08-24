@@ -20,6 +20,8 @@ public class CharacterInfo {
     @Column(name="char_name", nullable = false)
     private String charName;
 
+    private String job;
+
     private Integer level;
 
     @JsonIgnore
