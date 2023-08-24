@@ -54,6 +54,7 @@ public class CharacterController {
         return characters;
     }
 
+    // 캐릭터 id로 비교하는 것이 나아보인다.
     @PostMapping("/api/character/change-chars")
     @ResponseBody
     public String changeCharacters(HttpServletRequest request, @RequestBody List<CharacterInfoDto> characters){
@@ -65,7 +66,7 @@ public class CharacterController {
         boolean isUpdate = characterService.changeCharacters(id, characters);
 
         if(!isUpdate) return "Update Failed";
-        return "Update Succcess";
+        return "Update Success";
     }
 
     // 캐릭터 단일 수정

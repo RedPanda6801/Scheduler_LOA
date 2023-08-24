@@ -111,8 +111,8 @@ public class UserController {
         String id = token.get("id").toString();
 
         Boolean setting = userService.setKey(key, id);
-        if(!setting) return "Set Failed";
-        else return "Set Success";
+        if(!setting) return "Save Failed";
+        else return "Save Success";
     }
 
     @GetMapping("/api/user/get-key")

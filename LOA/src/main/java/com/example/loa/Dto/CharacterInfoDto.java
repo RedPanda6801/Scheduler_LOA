@@ -19,7 +19,7 @@ public class CharacterInfoDto {
 
     private String userId;
 
-    private String scheduleId;
+    private String job;
 
     private ScheduleDto scheduleDto;
 
@@ -28,6 +28,7 @@ public class CharacterInfoDto {
                 .id(entity.getId())
                 .charName(entity.getCharName())
                 .level(entity.getLevel())
+                .job(entity.getJob())
                 .userId(String.valueOf(entity.getUser().getId()))
                 .scheduleDto(ScheduleDto.toDto(entity.getSchedule()))
                 .build();

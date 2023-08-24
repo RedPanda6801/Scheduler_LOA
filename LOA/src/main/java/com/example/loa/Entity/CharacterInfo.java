@@ -38,13 +38,15 @@ public class CharacterInfo {
         return CharacterInfo.builder()
                 .charName(dto.getCharName())
                 .level(dto.getLevel())
+                .job(dto.getJob())
                 .schedule(schedule)
                 .user(user)
                 .build();
     }
 
-    public void update(String charName, Integer level){
-        this.setCharName(charName);
-        this.setLevel(level);
+    public void update(String charName, Integer level, String job){
+        if(charName != null) this.setCharName(charName);
+        if(level != null) this.setLevel(level);
+        if(job != null) this.setJob(job);
     }
 }
