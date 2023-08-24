@@ -21,6 +21,8 @@ public class ScheduleController {
     @Autowired
     ScheduleService scheduleService;
     JWTService jwtService = new JWTService();
+
+    // 스케줄 체크
     @PostMapping("/api/schedule/check")
     @ResponseBody
     public String checkSchedule(HttpServletRequest request, @RequestBody ScheduleDto dto){
@@ -33,6 +35,7 @@ public class ScheduleController {
         return "Check Success";
     }
 
+    // 스케줄 초기화
     @PostMapping("/api/schedule/reset")
     @ResponseBody
     public String resetSchedule(HttpServletRequest request){
@@ -47,6 +50,7 @@ public class ScheduleController {
         return "Reset Success";
     }
 
+    // 계정 단위 스케줄 조회
     @GetMapping("/api/schedule/get/user-schedules")
     @ResponseBody
     public List<ScheduleDto> getUserSchedule(HttpServletRequest request, @RequestBody List<Integer> ids){

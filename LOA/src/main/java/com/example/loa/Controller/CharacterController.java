@@ -22,6 +22,7 @@ public class CharacterController {
 
     private JWTService jwtService = new JWTService();
 
+    // 캐릭터 초기 세팅
     @PostMapping("/api/character/init")
     @ResponseBody
     public String initCharacters(HttpServletRequest request, @RequestBody List<CharacterInfoDto> characterInfoDtoList){
@@ -39,6 +40,7 @@ public class CharacterController {
         return "Init Success";
     }
 
+    // 계정 단위 캐릭터 조회
     @GetMapping("/api/character/get-chars")
     @ResponseBody
     public List<CharacterInfoDto> getCharacters(HttpServletRequest request){
@@ -54,7 +56,7 @@ public class CharacterController {
         return characters;
     }
 
-    // 캐릭터 id로 비교하는 것이 나아보인다.
+    // 스케줄 관리 캐릭터 번경
     @PostMapping("/api/character/change-chars")
     @ResponseBody
     public String changeCharacters(HttpServletRequest request, @RequestBody List<CharacterInfoDto> characters){
@@ -82,7 +84,8 @@ public class CharacterController {
         if(!isUpdated) return "Update Failed";
         return "Update Success";
     }
-    // 캐릭터 정보 최신화
+
+    // 계정 단위 캐릭터 정보 최신화
     @PostMapping("api/character/update-chars")
     @ResponseBody
     public String updateCharacters(HttpServletRequest request, @RequestBody List<CharacterInfoDto> characters){

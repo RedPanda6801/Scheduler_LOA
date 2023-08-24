@@ -3,8 +3,6 @@ package com.example.loa.Dto;
 import com.example.loa.Entity.CharacterInfo;
 import lombok.*;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

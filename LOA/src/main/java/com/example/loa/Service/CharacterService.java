@@ -78,6 +78,7 @@ public class CharacterService {
         return characterInfoDtoList;
     }
 
+    // 검색 방법 수정 필요
     public boolean changeCharacters(Integer id, List<CharacterInfoDto> characters){
         // 캐릭터에 매핑할 유저 조회
         Optional<User> userOptional = userService.getById(id);
