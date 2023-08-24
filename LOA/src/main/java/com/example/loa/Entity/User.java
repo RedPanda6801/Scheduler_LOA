@@ -29,6 +29,8 @@ public class User {
 
     private String server;
 
+    private String api;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     List<CharacterInfo> characterInfos = new ArrayList<>();
 
