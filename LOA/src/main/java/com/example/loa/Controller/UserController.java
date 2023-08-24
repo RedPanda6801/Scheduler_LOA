@@ -99,4 +99,34 @@ public class UserController {
         return "Delete Success";
     }
 
+    // LOA API KEY 추가
+    @PostMapping("/api/user/set-key")
+    @ResponseBody
+    public String setUserAPI(HttpServletRequest request, @RequestBody String key){
+        Claims token = jwtService.jwtCheckFunc(request);
+        if(token == null){
+            System.out.println("Token is Expired");
+            return null;
+        }
+        String id = token.get("id").toString();
+
+        Boolean setting = userService.setKey(key, id);
+        if(!setting) return "Set Failed";
+        else return "Set Success";
+    }
+
+    @GetMapping("/api/user/get-key")
+    @ResponseBody
+    public String getUserAPI(HttpServletRequest request){
+        Claims token = jwtService.jwtCheckFunc(request);
+        if(token == null){
+            System.out.println("Token is Expired");
+            return null;
+        }
+        String id = token.get("id").toString();
+
+        String key = userService.getKey(id);
+        if(key == null) return null;
+        else return key;
+    }
 }
