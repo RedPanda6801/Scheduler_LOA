@@ -29,7 +29,7 @@ public class Crew {
     private User user;
 
     @OneToMany(mappedBy = "crew")
-    List<UserCrew> userCrews = new ArrayList<>();
+    List<CrewMember> crewMembers = new ArrayList<>();
 
     public static Crew toEntity(CrewDto dto, User user){
         return Crew.builder()

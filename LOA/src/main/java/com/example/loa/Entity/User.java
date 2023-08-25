@@ -38,7 +38,7 @@ public class User {
     List<Crew> crews = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
-    List<UserCrew> userCrews = new ArrayList<>();
+    List<CrewMember> crewMembers = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     List<Apply> applies = new ArrayList<>();

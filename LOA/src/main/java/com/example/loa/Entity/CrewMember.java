@@ -6,12 +6,10 @@ import lombok.Data;
 
 @Entity
 @Data
-public class UserCrew {
+public class CrewMember {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    private Boolean star; // 즐찾 여부
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

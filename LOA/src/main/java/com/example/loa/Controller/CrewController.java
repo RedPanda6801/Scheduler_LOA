@@ -31,4 +31,18 @@ public class CrewController {
         if(!isCreated) return "Create Failed";
         return "Create Success";
     }
+
+    // 크루 인원 추가
+    @PostMapping("/api/crew/add-member")
+    @ResponseBody
+    public String addMember(HttpServletRequest request, @RequestBody String crewName){
+        // 유저 정보 확인
+        Claims token = jwtService.jwtCheckFunc(request);
+        if(token == null) return null;
+
+        Integer id = Integer.parseInt(token.get("id").toString());
+        Boolean isAdder = crewService.addMember(id, crewName);
+        if(!isAdder) return "Add Failed";
+        return "Add Success";
+    }
 }
