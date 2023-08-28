@@ -56,26 +56,33 @@ public class CrewService {
         return true;
     }
 
-    public Boolean addMember(Integer id, String crewName){
-        // 추가할 계정 불러오기
+    // dto 정보 : crew 이름, 크루원의 userId
+    public Boolean addMember(Integer id, CrewMemberDto dto){
+        // 내 권한 불러오기
         Optional<User> userTmp = userService.getById(id);
         if(!userTmp.isPresent()){
             System.out.println("[Error] No User Existed");
             return false;
         }
-        User crewOne = userTmp.get();
+        User head = userTmp.get();
         // 크루 가져오기
-        Optional<Crew> crewTmp = crewRepository.findCrewByName(crewName);
+        Optional<Crew> crewTmp = crewRepository.findCrewByName(dto.getCrew());
         if(!crewTmp.isPresent()){
             System.out.println("[Error] No Crew Existed");
             return false;
         }
         Crew crew = crewTmp.get();
-
+        // 크루 헤드가 아니면 추가 못하게 함
+        if(crew.getUser().getId() != head.getId()){
+            System.out.println("[Error] Forbidden Error");
+            return false;
+        }
+        // 추가할 유저 찾기
+        User addUser = userService.getByUserId(dto.getUser());
         // 크루 맴버 DB 추가
         try{
             CrewMember adder = new CrewMember();
-            adder.setUser(crewOne);
+            adder.setUser(addUser);
             adder.setCrew(crew);
             crewMemberRepository.save(adder);
         }catch (Exception e){
