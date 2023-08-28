@@ -46,6 +46,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     List<Board> boards = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    List<CrewApply> crewApplies = new ArrayList<>();
+
     public static User toEntity(UserDto dto) {
         return User.builder()
                 .userId(dto.getUserId())

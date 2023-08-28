@@ -1,10 +1,13 @@
 package com.example.loa.Service;
 
 import com.example.loa.Dto.CharacterInfoDto;
+import com.example.loa.Dto.CrewApplyDto;
 import com.example.loa.Dto.CrewMemberDto;
 import com.example.loa.Entity.Crew;
+import com.example.loa.Entity.CrewApply;
 import com.example.loa.Entity.CrewMember;
 import com.example.loa.Entity.User;
+import com.example.loa.Repository.CrewApplyRepository;
 import com.example.loa.Repository.CrewMemberRepository;
 import com.example.loa.Repository.CrewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,9 @@ public class CrewService {
 
     @Autowired
     CrewMemberRepository crewMemberRepository;
+
+    @Autowired
+    CrewApplyRepository crewApplyRepository;
 
     @Autowired
     CharacterService characterService;
@@ -49,6 +55,35 @@ public class CrewService {
             adder.setCrew(crew);
             adder.setUser(user);
             crewMemberRepository.save(adder);
+        }catch(Exception e){
+            System.out.println(String.format("[Error] %s", e));
+            return false;
+        }
+        return true;
+    }
+
+    public Boolean applyCrew(CrewApplyDto dto){
+        // 유저 확인
+        User user = userService.getByUserId(dto.getUserId());
+        // 입력한 대표캐릭터와 유저의 대표캐릭터가 일치하지 않으면 예외처리
+        if(!user.getCharName().equals(dto.getCharName())){
+            System.out.println("[Error] Data is Not Matched");
+            return false;
+        }
+        // 크루 확인
+        Optional<Crew> crewTmp = crewRepository.findCrewByName(dto.getCrewName());
+        if(!crewTmp.isPresent()){
+            System.out.println("[Error] No Crew Existed");
+            return false;
+        }
+        Crew crew = crewTmp.get();
+        // 신청서 저장
+        try{
+            CrewApply apply = new CrewApply();
+            apply.setUser(user);
+            apply.setDetails(dto.getDetails());
+            apply.setCrew(crew);
+            crewApplyRepository.save(apply);
         }catch(Exception e){
             System.out.println(String.format("[Error] %s", e));
             return false;

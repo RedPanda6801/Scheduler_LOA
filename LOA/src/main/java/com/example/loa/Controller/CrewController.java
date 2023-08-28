@@ -1,6 +1,7 @@
 package com.example.loa.Controller;
 
 import com.example.loa.Dto.CharacterInfoDto;
+import com.example.loa.Dto.CrewApplyDto;
 import com.example.loa.Dto.CrewMemberDto;
 import com.example.loa.Service.CrewService;
 import com.example.loa.Service.JWTService;
@@ -32,6 +33,18 @@ public class CrewController {
         Boolean isCreated = crewService.addCrew(id, crewName);
         if(!isCreated) return "Create Failed";
         return "Create Success";
+    }
+
+    @PostMapping("/api/crew/apply-crew")
+    @ResponseBody
+    public String applyCrew(HttpServletRequest request, @RequestBody CrewApplyDto applyDto){
+        // 유저 정보 확인
+        Claims token = jwtService.jwtCheckFunc(request);
+        if(token == null) return null;
+
+        Boolean isApplied = crewService.applyCrew(applyDto);
+        if(!isApplied) return "Apply Failed";
+        return "Apply Success";
     }
 
     // 크루 인원 추가
