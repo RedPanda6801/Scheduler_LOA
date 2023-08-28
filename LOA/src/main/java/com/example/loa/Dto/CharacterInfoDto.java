@@ -21,6 +21,8 @@ public class CharacterInfoDto {
 
     private ScheduleDto scheduleDto;
 
+    private String mainCharacter;
+
     public static CharacterInfoDto toDto(CharacterInfo entity) {
         return CharacterInfoDto.builder()
                 .id(entity.getId())

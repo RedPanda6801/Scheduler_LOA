@@ -71,7 +71,7 @@ public class UserService {
             System.out.println("[Error] Password Error");
             return "Password Error";
         }
-        String token = jwtService.makeJwtToken(user.getId(), userId);
+        String token = jwtService.makeJwtToken(user.getId(), user.getCharName());
 
         // Model에 token을 같이 넘겨주어 프론트에서 localStorage에 저장하게끔 구현
 

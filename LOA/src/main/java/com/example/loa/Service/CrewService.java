@@ -1,10 +1,13 @@
 package com.example.loa.Service;
 
 import com.example.loa.Dto.CharacterInfoDto;
+import com.example.loa.Dto.CrewApplyDto;
 import com.example.loa.Dto.CrewMemberDto;
 import com.example.loa.Entity.Crew;
+import com.example.loa.Entity.CrewApply;
 import com.example.loa.Entity.CrewMember;
 import com.example.loa.Entity.User;
+import com.example.loa.Repository.CrewApplyRepository;
 import com.example.loa.Repository.CrewMemberRepository;
 import com.example.loa.Repository.CrewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,9 @@ public class CrewService {
 
     @Autowired
     CrewMemberRepository crewMemberRepository;
+
+    @Autowired
+    CrewApplyRepository crewApplyRepository;
 
     @Autowired
     CharacterService characterService;
@@ -56,26 +62,62 @@ public class CrewService {
         return true;
     }
 
-    public Boolean addMember(Integer id, String crewName){
-        // 추가할 계정 불러오기
-        Optional<User> userTmp = userService.getById(id);
-        if(!userTmp.isPresent()){
-            System.out.println("[Error] No User Existed");
+    public Boolean applyCrew(CrewApplyDto dto){
+        // 유저 확인
+        User user = userService.getByUserId(dto.getUserId());
+        // 입력한 대표캐릭터와 유저의 대표캐릭터가 일치하지 않으면 예외처리
+        if(!user.getCharName().equals(dto.getCharName())){
+            System.out.println("[Error] Data is Not Matched");
             return false;
         }
-        User crewOne = userTmp.get();
-        // 크루 가져오기
-        Optional<Crew> crewTmp = crewRepository.findCrewByName(crewName);
+        // 크루 확인
+        Optional<Crew> crewTmp = crewRepository.findCrewByName(dto.getCrewName());
         if(!crewTmp.isPresent()){
             System.out.println("[Error] No Crew Existed");
             return false;
         }
         Crew crew = crewTmp.get();
+        // 신청서 저장
+        try{
+            CrewApply apply = new CrewApply();
+            apply.setUser(user);
+            apply.setDetails(dto.getDetails());
+            apply.setCrew(crew);
+            crewApplyRepository.save(apply);
+        }catch(Exception e){
+            System.out.println(String.format("[Error] %s", e));
+            return false;
+        }
+        return true;
+    }
 
+    // dto 정보 : crew 이름, 크루원의 userId
+    public Boolean addMember(Integer id, CrewMemberDto dto){
+        // 내 권한 불러오기
+        Optional<User> userTmp = userService.getById(id);
+        if(!userTmp.isPresent()){
+            System.out.println("[Error] No User Existed");
+            return false;
+        }
+        User head = userTmp.get();
+        // 크루 가져오기
+        Optional<Crew> crewTmp = crewRepository.findCrewByName(dto.getCrew());
+        if(!crewTmp.isPresent()){
+            System.out.println("[Error] No Crew Existed");
+            return false;
+        }
+        Crew crew = crewTmp.get();
+        // 크루 헤드가 아니면 추가 못하게 함
+        if(crew.getUser().getId() != head.getId()){
+            System.out.println("[Error] Forbidden Error");
+            return false;
+        }
+        // 추가할 유저 찾기
+        User addUser = userService.getByUserId(dto.getUser());
         // 크루 맴버 DB 추가
         try{
             CrewMember adder = new CrewMember();
-            adder.setUser(crewOne);
+            adder.setUser(addUser);
             adder.setCrew(crew);
             crewMemberRepository.save(adder);
         }catch (Exception e){
@@ -131,7 +173,7 @@ public class CrewService {
         try{
             for(CrewMember member : members){
                 User user = member.getUser();
-                List<CharacterInfoDto> characters = characterService.getCharacterByUserId(user.getId());
+                List<CharacterInfoDto> characters = characterService.getCharacterByUserId(user.getId(), user.getCharName());
                 results.add(characters);
             }
         }catch(Exception e){

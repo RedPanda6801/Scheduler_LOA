@@ -31,6 +31,9 @@ public class Crew {
     @OneToMany(mappedBy = "crew")
     List<CrewMember> crewMembers = new ArrayList<>();
 
+    @OneToMany(mappedBy = "crew")
+    List<CrewApply> crewApplies = new ArrayList<>();
+
     public static Crew toEntity(CrewDto dto, User user){
         return Crew.builder()
                 .name(dto.getName())

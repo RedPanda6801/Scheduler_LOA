@@ -1,9 +1,8 @@
 package com.example.loa.Controller;
 
 import com.example.loa.Dto.CharacterInfoDto;
-import com.example.loa.Dto.CrewDto;
+import com.example.loa.Dto.CrewApplyDto;
 import com.example.loa.Dto.CrewMemberDto;
-import com.example.loa.Dto.UserDto;
 import com.example.loa.Service.CrewService;
 import com.example.loa.Service.JWTService;
 import io.jsonwebtoken.Claims;
@@ -36,16 +35,28 @@ public class CrewController {
         return "Create Success";
     }
 
+    @PostMapping("/api/crew/apply-crew")
+    @ResponseBody
+    public String applyCrew(HttpServletRequest request, @RequestBody CrewApplyDto applyDto){
+        // 유저 정보 확인
+        Claims token = jwtService.jwtCheckFunc(request);
+        if(token == null) return null;
+
+        Boolean isApplied = crewService.applyCrew(applyDto);
+        if(!isApplied) return "Apply Failed";
+        return "Apply Success";
+    }
+
     // 크루 인원 추가
     @PostMapping("/api/crew/add-member")
     @ResponseBody
-    public String addMember(HttpServletRequest request, @RequestBody String crewName){
+    public String addMember(HttpServletRequest request, @RequestBody CrewMemberDto dto){
         // 유저 정보 확인
         Claims token = jwtService.jwtCheckFunc(request);
         if(token == null) return null;
 
         Integer id = Integer.parseInt(token.get("id").toString());
-        Boolean isAdder = crewService.addMember(id, crewName);
+        Boolean isAdder = crewService.addMember(id, dto);
         if(!isAdder) return "Add Failed";
         return "Add Success";
     }

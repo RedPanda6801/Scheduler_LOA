@@ -60,7 +60,7 @@ public class CharacterService {
     }
 
     // 개인 케릭터 및 스케줄 조회
-    public List<CharacterInfoDto> getCharacterByUserId(Integer id){
+    public List<CharacterInfoDto> getCharacterByUserId(Integer id, String charName){
 
         List<CharacterInfoDto> characterInfoDtoList = new ArrayList<>();
         try{
@@ -69,6 +69,7 @@ public class CharacterService {
             // entity를 Dto로 변환
             for(CharacterInfo entity : characterInfosTmp){
                 CharacterInfoDto dto = CharacterInfoDto.toDto(entity);
+                dto.setMainCharacter(charName);
                 characterInfoDtoList.add(dto);
             }
         }catch(Exception e){
@@ -86,7 +87,9 @@ public class CharacterService {
             System.out.println("[Error] No User Existed");
             return false;
         }
-        List<CharacterInfoDto> originCharacters = getCharacterByUserId(id);
+        User user = userOptional.get();
+
+        List<CharacterInfoDto> originCharacters = getCharacterByUserId(id, user.getCharName());
         // 갱신할 캐릭터들 List 생성
         List<String> addCharNames = new ArrayList<>();
         for(CharacterInfoDto dto : characters){
@@ -123,7 +126,7 @@ public class CharacterService {
             for(CharacterInfoDto character : characters){
                 if(addCharNames.contains(character.getCharName())){
                     Schedule schedule = scheduleService.init();
-                    addCharacters.add(CharacterInfo.toEntity(character, userOptional.get(), schedule));
+                    addCharacters.add(CharacterInfo.toEntity(character, user, schedule));
                 }
             }
             // 추가할 캐릭터를 DB에 추가
