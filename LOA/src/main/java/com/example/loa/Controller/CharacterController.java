@@ -48,9 +48,9 @@ public class CharacterController {
         Claims token = jwtService.jwtCheckFunc(request);
         if(token == null) return null;
         Integer id = Integer.parseInt(token.get("id").toString());
-
+        String charName = token.get("mainChar").toString();
         // 로그인한 유저의 캐릭터들 가져오기
-        List<CharacterInfoDto> characters = characterService.getCharacterByUserId(id);
+        List<CharacterInfoDto> characters = characterService.getCharacterByUserId(id, charName);
         if(characters == null) System.out.println("[Alert] No Characters");
         System.out.println("[Alert] Get Characters Success");
         return characters;

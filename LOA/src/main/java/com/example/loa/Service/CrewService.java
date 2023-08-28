@@ -131,7 +131,7 @@ public class CrewService {
         try{
             for(CrewMember member : members){
                 User user = member.getUser();
-                List<CharacterInfoDto> characters = characterService.getCharacterByUserId(user.getId());
+                List<CharacterInfoDto> characters = characterService.getCharacterByUserId(user.getId(), user.getCharName());
                 results.add(characters);
             }
         }catch(Exception e){

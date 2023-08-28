@@ -1,9 +1,6 @@
 package com.example.loa.Controller;
 
 import com.example.loa.Dto.CharacterInfoDto;
-import com.example.loa.Dto.CrewDto;
-import com.example.loa.Dto.CrewMemberDto;
-import com.example.loa.Dto.UserDto;
 import com.example.loa.Service.CrewService;
 import com.example.loa.Service.JWTService;
 import io.jsonwebtoken.Claims;
