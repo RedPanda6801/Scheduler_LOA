@@ -2,16 +2,14 @@ package com.example.loa.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(exclude = {"crew" , "user"})
 public class CrewApply {
     @Id
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
