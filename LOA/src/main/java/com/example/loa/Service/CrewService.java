@@ -91,6 +91,35 @@ public class CrewService {
         return true;
     }
 
+    public List<CrewApplyDto> getCrewApplies(Integer id, String crewName){
+        // 요청 크루 조회
+        Optional<Crew> crewTmp = crewRepository.findCrewByName(crewName);
+        if(!crewTmp.isPresent()){
+            System.out.println("[Error] No Crew Existed");
+            return null;
+        }
+        Crew crew = crewTmp.get();
+        // crew 헤드의 DB id값과 JWT 내의 id 값을 비교
+        if(crew.getUser().getId() != id){
+            System.out.println("[Error] Forbidden Error");
+            return null;
+        }
+
+        List<CrewApplyDto> results = new ArrayList<>();
+        try{
+            // 크루로 지원서 조회
+            List<CrewApply> crewApplies = crewApplyRepository.findAllByCrew(crew);
+            // DB 값을 DTO로 변환
+            for(CrewApply crewApply : crewApplies){
+                CrewApplyDto dto = CrewApplyDto.toDto(crewApply);
+                results.add(dto);
+            }
+        }catch(Exception e){
+            System.out.println(String.format("[Error] %s", e));
+            return null;
+        }
+        return results;
+    }
     // dto 정보 : crew 이름, 크루원의 userId
     public Boolean addMember(Integer id, CrewMemberDto dto){
         // 내 권한 불러오기

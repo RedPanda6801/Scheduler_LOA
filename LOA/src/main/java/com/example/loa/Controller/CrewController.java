@@ -35,6 +35,7 @@ public class CrewController {
         return "Create Success";
     }
 
+    // 크루 지원서 작성
     @PostMapping("/api/crew/apply-crew")
     @ResponseBody
     public String applyCrew(HttpServletRequest request, @RequestBody CrewApplyDto applyDto){
@@ -45,6 +46,21 @@ public class CrewController {
         Boolean isApplied = crewService.applyCrew(applyDto);
         if(!isApplied) return "Apply Failed";
         return "Apply Success";
+    }
+
+    // 크루 지원서 조회
+    @GetMapping("/api/crew/get-applies/{crewName}")
+    @ResponseBody
+    public List<CrewApplyDto> getCrewApplies(HttpServletRequest request, @PathVariable String crewName){
+        // 유저 정보 확인
+        Claims token = jwtService.jwtCheckFunc(request);
+        if(token == null) return null;
+
+        Integer id = Integer.parseInt(token.get("id").toString());
+        List<CrewApplyDto> applies = crewService.getCrewApplies(id, crewName);
+        if(applies == null) System.out.println("[Alert] No Applies In Crew");
+        return applies;
+
     }
 
     // 크루 인원 추가
