@@ -1,11 +1,25 @@
 // Schedule
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 
 const Category3 = () => {
   const [scheduleCheckResult, setScheduleCheckResult] = useState("");
+  const [characterSchedule, setCharacterSchedule] = useState([]);
   const [resetResult, setResetResult] = useState("");
   const JWT_TOKEN = localStorage.getItem("token");
+
+    useEffect(() => {
+        axios.get("/api/character/get-chars",
+            {
+                headers: {
+                    Authorization: `Bearer ${JWT_TOKEN}`
+                }
+            }
+        ).then((response) => {
+            console.log(response.data);
+            setCharacterSchedule(response.data);
+        })
+    }, []);
   const handleScheduleCheck = () => {
     // api 불러오기가 일단 되는지 확인
     // 데이터값 적용되나?
@@ -57,6 +71,24 @@ const Category3 = () => {
   return (
     <div>
       <div>개인 컨텐츠</div>
+        {
+            characterSchedule.map((data) => {
+                return (
+                    <div key={data.id}>
+                        <h4>{data.charName} : {data.level} {data.job}</h4>
+                        {
+                            Object.keys(data.scheduleDto).map((key) => {
+                                return(
+                                    <div>
+                                        <p>{key} : {data.scheduleDto[key]? "T" : "F"}</p>
+                                    </div>
+                                )
+                            })
+                        }
+                    </div>
+                )
+            })
+        }
       <button onClick={handleScheduleCheck}>스케줄 체킹</button>
       <p>{scheduleCheckResult}</p>
       <button onClick={handleScheduleReset}>스케줄 초기화</button>
