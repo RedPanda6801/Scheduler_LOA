@@ -35,6 +35,11 @@ public class UserService {
     }
 
     public boolean create(User user){
+        if(user.getPassword() == null || user.getCharName() == null || user.getServer() == null || user.getUserId() == null){
+            System.out.println("[Error] More Data Need");
+            return false;
+        }
+
         try{
             User userTmp = user;
             String hash = bcryptService.encodeBcrypt(user.getPassword(), 10);

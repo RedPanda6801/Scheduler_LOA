@@ -12,9 +12,16 @@ const SignIn = () => {
         userId,
         password,
       });
+      if(response.data == 'Id is Incorrected'){
+        alert("아이디 에러");
+      }else if(response.data == 'Check Your Password'){
+        alert("비밀번호 에러");
+      }
+      alert("로그인 성공");
       localStorage.setItem("token", response.data);
       console.log("User signed in:", response.data);
     } catch (error) {
+      alert("회원가입 실패");
       console.error("Error signing in:", error);
     }
   };

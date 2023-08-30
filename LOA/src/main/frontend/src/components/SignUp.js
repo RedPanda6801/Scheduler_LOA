@@ -9,6 +9,11 @@ const SignUp = () => {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
+    // Validation
+    if(userId == "" || password == "" || charName == "" || server == ""){
+      alert("입력이 더 필요합니다.");
+      return;
+    }
     try {
       const response = await axios.post("/api/auth/sign", {
         userId,
@@ -16,9 +21,10 @@ const SignUp = () => {
         charName,
         server,
       });
-
+      alert("회원가입 완료");
       console.log("User registered:", response.data);
     } catch (error) {
+      alert("회원가입 실패");
       console.error("Error signing up:", error);
     }
   };

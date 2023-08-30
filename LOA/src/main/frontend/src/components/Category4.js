@@ -3,51 +3,66 @@ import axios from "axios";
 
 const JWT_TOKEN = localStorage.getItem("token");
 const Category4 = () => {
-  const [userCharacters, setUserCharacter] = useState([]);
+    const [selectedCrewOnes, setSelectedCrewOnes] = useState([]);
+  const [userCrews, setUserCrews] = useState([]);
 
   useEffect(() => {
-      axios.get("/api/character/get-chars",
+      axios.get("/api/crew/get-crew",
           {
               headers: {
                   Authorization: `Bearer ${JWT_TOKEN}`
               }
           }).then((response) => {
-            setUserCharacter(response.data);
+            setUserCrews(response.data);
           })}, [])
 
-  const handleCharacterSelect = (character) => {
-      setUserCharacter(character);
+  const handleCrewSelect = async (crew) => {
+      const response = await axios.get(`/api/crew/get-members/${crew}`,
+          {
+              headers: {
+                  Authorization: `Bearer ${JWT_TOKEN}`
+              }
+          }
+      );
+      setSelectedCrewOnes(response.data);
   };
 
   return (
     <div>
         <h2>크루 관리 게시판</h2>
 
-                <CharacterDiv characters={userCharacters} onSelect={handleCharacterSelect} />
-                {setUserCharacter && <ContentStatus character={setUserCharacter} />}
+                <CrewDiv crews={userCrews} onSelect={handleCrewSelect} />
+                {
+                    selectedCrewOnes.map((crewone, index) => {
+                        console.log(index);
+                        return(
+                            <p key={index}>{crewone[index].mainCharacter}</p>
+                            // {<ContentStatus crewone={crewone}/>}
+                        )
+                    })
+                }
 
     </div>
   );
 };
 
-const CharacterDiv = ({ characters, onSelect }) => {
+const CrewDiv = ({ crews, onSelect }) => {
   return (
     <select onChange={(e) => onSelect(e.target.value)}>
-      <option value="">캐릭터를 선택하세요</option>
-      {Array.isArray(characters) ? characters.map((character) => (
-        <option key={character.id} value={character.charName}>
-            {character.charName}
+      <option value="">크루를 선택하세요</option>
+      {Array.isArray(crews) ? crews.map((crew, index) => (
+        <option key={index} value={crew}>
+            {crew}
         </option>
       )) : null}
     </select>
   );
 };
 
-const ContentStatus = ({ character }) => {
+const ContentStatus = ({ crew }) => {
   return (
     <div>
-      <h3>{character} 컨텐츠 현황</h3>
-      {/* 컨텐츠 추가해야함 */}
+      <h3>{crew} 컨텐츠 현황</h3>
     </div>
   );
 };
