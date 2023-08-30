@@ -120,6 +120,31 @@ public class CrewService {
         }
         return results;
     }
+
+    public Boolean deleteCrewApply(Integer id, String applyId){
+        // 요청서 조회
+        Optional<CrewApply> applyTmp = crewApplyRepository.findById(Integer.parseInt(applyId));
+        if(!applyTmp.isPresent()){
+            System.out.println("[Error] No Apply Existed");
+            return false;
+        }
+        CrewApply apply = applyTmp.get();
+        // 요청서의 크루 헤드를 JWT id값 으로 확인
+        if(apply.getCrew().getUser().getId() != id){
+            System.out.println("[Error] Forbidden Error");
+            return false;
+        }
+        // 요청서 삭제
+        try{
+            crewApplyRepository.delete(apply);
+        }catch(Exception e){
+            System.out.println(String.format("[Error] %s", e));
+            return false;
+        }
+        return true;
+
+    }
+
     // dto 정보 : crew 이름, 크루원의 userId
     public Boolean addMember(Integer id, CrewMemberDto dto){
         // 내 권한 불러오기

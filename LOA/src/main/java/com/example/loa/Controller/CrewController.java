@@ -63,6 +63,21 @@ public class CrewController {
 
     }
 
+    // 크루 지원서 반려
+    @PostMapping("/api/crew/delete-applies/{applyId}")
+    @ResponseBody
+    public String deleteCrewApply(HttpServletRequest request, @PathVariable String applyId){
+        // 유저 정보 확인
+        Claims token = jwtService.jwtCheckFunc(request);
+        if(token == null) return null;
+
+        Integer id = Integer.parseInt(token.get("id").toString());
+        Boolean isDeleted = crewService.deleteCrewApply(id, applyId);
+        if(!isDeleted) return "Delete Failed";
+        return "Delete Success";
+    }
+
+
     // 크루 인원 추가
     @PostMapping("/api/crew/add-member")
     @ResponseBody
