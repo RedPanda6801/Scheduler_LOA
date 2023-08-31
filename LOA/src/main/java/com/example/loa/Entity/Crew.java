@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 // 출력 시에 객체 무한 참조를 막기 위한 exclude
-@ToString(exclude = {"userCrews","user"})
+@ToString(exclude = {"crewMembers","user", "crewApplies"})
 public class Crew {
 
     @Id

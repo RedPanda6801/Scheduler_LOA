@@ -2,6 +2,7 @@ package com.example.loa.Controller;
 
 import com.example.loa.Dto.CharacterInfoDto;
 import com.example.loa.Dto.CrewApplyDto;
+import com.example.loa.Dto.CrewDto;
 import com.example.loa.Dto.CrewMemberDto;
 import com.example.loa.Service.CrewService;
 import com.example.loa.Service.JWTService;
@@ -22,15 +23,15 @@ public class CrewController {
     JWTService jwtService = new JWTService();
 
     // 새 크루 생성
-    @PostMapping("/api/crew/add-crew")
+    @PostMapping("/api/crew/create")
     @ResponseBody
-    public String addCrew(HttpServletRequest request, @RequestBody String crewName){
+    public String addCrew(HttpServletRequest request, @RequestBody CrewDto dto){
         // 유저 정보 확인
         Claims token = jwtService.jwtCheckFunc(request);
         if(token == null) return null;
 
         Integer id = Integer.parseInt(token.get("id").toString());
-        Boolean isCreated = crewService.addCrew(id, crewName);
+        Boolean isCreated = crewService.addCrew(id, dto.getName());
         if(!isCreated) return "Create Failed";
         return "Create Success";
     }

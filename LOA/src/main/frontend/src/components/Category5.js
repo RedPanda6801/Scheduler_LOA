@@ -2,33 +2,33 @@ import React, { useState } from "react";
 import axios from "axios";
 
 const Category4 = () => {
-  const [userCreatedCrew, setUserCreatedCrew] = useState("");
+  // const [userCreatedCrew, setUserCreatedCrew] = useState("");
   const [favoriteCrewMembers, setFavoriteCrewMembers] = useState([]);
   const [selectedCrewMember, setSelectedCrewMember] = useState("");
   const [contentProgress, setContentProgress] = useState("");
 
   const token = localStorage.getItem("token");
 
-  const handleCreateCrew = () => {
-    // crew api 따로 적용 할것인지..?
-    // 적용 안하면 Post쪽 바꿔야돼
-    axios
-      .post(
-        "/api/crew/create",
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-      .then((response) => {
-        setUserCreatedCrew("Crew created");
-      })
-      .catch((error) => {
-        setUserCreatedCrew("Crew creation failed");
-      });
-  };
+  // const handleCreateCrew = () => {
+  //   // crew api 따로 적용 할것인지..?
+  //   // 적용 안하면 Post쪽 바꿔야돼
+  //   axios
+  //     .post(
+  //       "/api/crew/create",
+  //       {},
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     )
+  //     .then((response) => {
+  //       setUserCreatedCrew("Crew created");
+  //     })
+  //     .catch((error) => {
+  //       setUserCreatedCrew("Crew creation failed");
+  //     });
+  // };
 
   const handleFavoriteCrewMember = (crewMember) => {
     // 즐겨찾기
@@ -60,8 +60,8 @@ const Category4 = () => {
 
   return (
     <div>
-      <button onClick={handleCreateCrew}>크루 생성</button>
-      <p>{userCreatedCrew}</p>
+      {/*<button onClick={handleCreateCrew}>크루 생성</button>*/}
+      {/*<p>{userCreatedCrew}</p>*/}
 
       <div>
         <h2>즐겨찾기 크루원</h2>
