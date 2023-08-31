@@ -8,6 +8,7 @@ const Category1 = () => {
   const [calendarContant , setCalendarContent ] = useState([]);
   let key = 0;
     useEffect(() => {
+        // 공지사항 호출
         axios.get("https://developer-lostark.game.onstove.com/news/notices",
             {
                 headers: {
@@ -16,24 +17,29 @@ const Category1 = () => {
             }
         ).then((response) => {
             setCategory2Content(response.data);
-        })
-    }, []);
-    useEffect(() => {
-        axios.get("https://developer-lostark.game.onstove.com/gamecontents/calendar",
-            {
-                headers: {
-                    Authorization: `Bearer ${API_KEY}`
+            // 이벤트섬 호출
+            axios.get("https://developer-lostark.game.onstove.com/gamecontents/calendar",
+                {
+                    headers: {
+                        Authorization: `Bearer ${API_KEY}`
+                    }
                 }
-            }
-        ).then((response) => {
-            setCalendarContent(response.data);
-        }).catch((e) =>{
+            ).then((response) => {
+                setCalendarContent(response.data);
+            }).catch((e) =>{
+                if(e.response.status == "429"){
+                    console.log("Too Many Request!");
+                }
+                return null;
+            })
+        }).catch((e) => {
             if(e.response.status == "429"){
-                alert("To Many Request!");
+                console.log("Too Many Request!");
             }
             return null;
         })
-    })
+    }, []);
+
   return (
 
     <div>

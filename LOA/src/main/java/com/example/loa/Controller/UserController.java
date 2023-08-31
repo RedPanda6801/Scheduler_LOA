@@ -1,5 +1,6 @@
 package com.example.loa.Controller;
 
+import com.example.loa.Dto.ApiDto;
 import com.example.loa.Dto.UserDto;
 import com.example.loa.Entity.User;
 import com.example.loa.Service.JWTService;
@@ -102,7 +103,7 @@ public class UserController {
     // LOA API KEY 추가
     @PostMapping("/api/user/set-key")
     @ResponseBody
-    public String setUserAPI(HttpServletRequest request, @RequestBody String key){
+    public String setUserAPI(HttpServletRequest request, @RequestBody ApiDto dto){
         Claims token = jwtService.jwtCheckFunc(request);
         if(token == null){
             System.out.println("Token is Expired");
@@ -110,7 +111,7 @@ public class UserController {
         }
         String id = token.get("id").toString();
 
-        Boolean setting = userService.setKey(key, id);
+        Boolean setting = userService.setKey(dto.getKey(), id);
         if(!setting) return "Save Failed";
         else return "Save Success";
     }

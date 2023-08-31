@@ -36,14 +36,29 @@ public class CrewService {
     UserService userService;
 
     public Boolean addCrew(Integer id, String crewName){
+        // 크루 이름 중복 확인
+        Optional<Crew> crewTmp = crewRepository.findCrewByName(crewName);
+        if(crewTmp.isPresent()){
+            System.out.println("[Error] Crew Name Overlapped");
+            return false;
+        }
+
         // 유저 정보 찾기
         Optional<User> userTmp = userService.getById(id);
         if(!userTmp.isPresent()){
             System.out.println("[Error] No User Existed");
             return false;
         }
-
         User user = userTmp.get();
+
+        // 유저가 헤드인 모든 크루 찾아보기
+        List<Crew> crewList = crewRepository.findAllByUser(user);
+
+        if(crewList.size() > 1){
+            System.out.println("[Error] Too Many Create Crew");
+            return false;
+        }
+
         // 캐릭터 정보 저장
         try{
             Crew crew = new Crew();
