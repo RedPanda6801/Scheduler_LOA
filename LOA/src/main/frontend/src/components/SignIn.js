@@ -12,9 +12,9 @@ const SignIn = () => {
         userId,
         password,
       });
-      if(response.data == 'Id is Incorrected'){
+      if(response.data === 'Id is Incorrected'){
         alert("아이디 에러");
-      }else if(response.data == 'Check Your Password'){
+      }else if(response.data === 'Check Your Password'){
         alert("비밀번호 에러");
       }
       alert("로그인 성공");
