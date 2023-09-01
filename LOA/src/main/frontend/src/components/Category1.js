@@ -27,13 +27,13 @@ const Category1 = () => {
             ).then((response) => {
                 setCalendarContent(response.data);
             }).catch((e) =>{
-                if(e.response.status == "429"){
+                if(e.response.status === "429"){
                     console.log("Too Many Request!");
                 }
                 return null;
             })
         }).catch((e) => {
-            if(e.response.status == "429"){
+            if(e.response.status === "429"){
                 console.log("Too Many Request!");
             }
             return null;

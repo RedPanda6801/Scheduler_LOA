@@ -10,7 +10,7 @@ const SignUp = () => {
   const handleSignUp = async (e) => {
     e.preventDefault();
     // Validation
-    if(userId == "" || password == "" || charName == "" || server == ""){
+    if(userId === "" || password === "" || charName === "" || server === ""){
       alert("입력이 더 필요합니다.");
       return;
     }
