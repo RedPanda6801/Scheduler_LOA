@@ -31,6 +31,8 @@ public class ScheduleDto {
 
     private Boolean khamen;
 
+    private Integer userId;
+
     public static ScheduleDto toDto(Schedule entity) {
         return ScheduleDto.builder()
                 .id(entity.getId())
