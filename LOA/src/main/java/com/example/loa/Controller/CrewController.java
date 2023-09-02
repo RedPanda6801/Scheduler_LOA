@@ -9,6 +9,7 @@ import com.example.loa.Service.JWTService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,19 @@ public class CrewController {
     CrewService crewService;
 
     JWTService jwtService = new JWTService();
+
+    // 크루 존재 여부
+    @GetMapping("/api/crew/is-crew/{crewName}")
+    @ResponseBody
+    public Boolean isCrew(HttpServletRequest request, @PathVariable String crewName){
+        // 유저 정보 확인
+        Claims token = jwtService.jwtCheckFunc(request);
+        if(token == null) return null;
+
+        Boolean isExisted = crewService.isCrew(crewName);
+        if(!isExisted) return false;
+        return true;
+    }
 
     // 새 크루 생성
     @PostMapping("/api/crew/create")

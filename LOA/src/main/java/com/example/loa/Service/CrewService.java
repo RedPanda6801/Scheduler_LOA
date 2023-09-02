@@ -35,6 +35,14 @@ public class CrewService {
     @Autowired
     UserService userService;
 
+    public Boolean isCrew(String crewName){
+        // 크루 찾기
+        Optional<Crew> crewTmp = crewRepository.findCrewByName(crewName);
+        if(!crewTmp.isPresent()) return false;
+        System.out.println(crewTmp.get());
+        return true;
+    }
+
     public Boolean addCrew(Integer id, String crewName){
         // 크루 이름 중복 확인
         Optional<Crew> crewTmp = crewRepository.findCrewByName(crewName);
