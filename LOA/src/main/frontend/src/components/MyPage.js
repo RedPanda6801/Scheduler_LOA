@@ -9,6 +9,8 @@ const MyPage = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [updateResult, setUpdateResult] = useState("");
   const [deleteResult, setDeleteResult] = useState("");
+  const [selectedCharacter, setSelectedCharacter] = useState(null);
+  const [scheduleState, setScheduleState] = useState({});
 
   const token = localStorage.getItem("token");
 
@@ -25,12 +27,34 @@ const MyPage = () => {
     fetchUserInfo();
   }, [userId]);
 
-  const fetchUserInfo = async () => {
+  const handleCharacterClick = (characterId) => {
+    setSelectedCharacter(characterId);
+  };
+
+  const handleScheduleCheck = async (characterId, scheduleKey) => {
     try {
-      const response = await axios.get(`/api/user/getUser/${userId}`);
-      setUserInfo(response.data);
+      const response = await axios.post(
+        `/api/schedule/check/${characterId}`,
+        { scheduleKey },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("Schedule checked:", response.data);
+
+      // 스케줄 체크 상태 업데이트
+      setScheduleState((prevState) => ({
+        ...prevState,
+        [characterId]: {
+          ...prevState[characterId],
+          [scheduleKey]: !prevState[characterId]?.[scheduleKey],
+        },
+      }));
     } catch (error) {
-      console.error("Error fetching user info:", error);
+      console.error("Error checking schedule:", error);
     }
   };
 
@@ -86,6 +110,50 @@ const MyPage = () => {
         </div>
       ) : (
         <p>No user info available.</p>
+      )}
+
+      {/* 캐릭터 목록 렌더링 */}
+      {userInfo && userInfo.characters ? (
+        <div>
+          <h3>My Characters</h3>
+          <ul>
+            {userInfo.characters.map((character) => (
+              <li key={character.id}>
+                {/* 캐릭터를 클릭하면 해당 캐릭터의 스케줄 드롭다운 표시 */}
+                <button onClick={() => handleCharacterClick(character.id)}>
+                  {character.name}
+                </button>
+                {/* 캐릭터의 스케줄 드롭다운 */}
+                {selectedCharacter === character.id && (
+                  <div>
+                    <h4>Schedule for {character.name}</h4>
+                    <ul>
+                      {Object.keys(character.schedule).map((scheduleKey) => (
+                        <li key={scheduleKey}>
+                          {/* 각 스케줄에 대한 체크박스 */}
+                          <label>
+                            {scheduleKey}
+                            <input
+                              type="checkbox"
+                              checked={
+                                scheduleState[character.id]?.[scheduleKey]
+                              }
+                              onChange={() =>
+                                handleScheduleCheck(character.id, scheduleKey)
+                              }
+                            />
+                          </label>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <p>No character info available.</p>
       )}
 
       <form onSubmit={handleUpdate}>
