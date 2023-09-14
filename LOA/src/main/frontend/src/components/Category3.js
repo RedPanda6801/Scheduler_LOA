@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Accordion from "react-bootstrap/Accordion";
-import { Button } from "react-bootstrap";
+// import { Button } from "react-bootstrap"; 버튼은 잠깐 빼놓기
 import { Form, Col } from "react-bootstrap";
 
 const Category3 = () => {
@@ -10,11 +10,14 @@ const Category3 = () => {
   const [resetResult, setResetResult] = useState("");
   const [characterId, setCharacterId] = useState("");
 
+  const [userSchedules, setUserSchedules] = useState([]); // 사용자 스케줄 정보 추가
+
   const API_KEY =
     "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IktYMk40TkRDSTJ5NTA5NWpjTWk5TllqY2lyZyIsImtpZCI6IktYMk40TkRDSTJ5NTA5NWpjTWk5TllqY2lyZyJ9.eyJpc3MiOiJodHRwczovL2x1ZHkuZ2FtZS5vbnN0b3ZlLmNvbSIsImF1ZCI6Imh0dHBzOi8vbHVkeS5nYW1lLm9uc3RvdmUuY29tL3Jlc291cmNlcyIsImNsaWVudF9pZCI6IjEwMDAwMDAwMDAwMjkxMDMifQ.pzyW3e9arSfzt83LULmVxs0RvBqlm27P1meE6KikBZW7JonoCYxzU7_rFRg8Kmn4Z7qVZ5u7Rn4DYtwZjtruP4dlTmOI229lpsCFs9tBj81rcs1sVD-zzep0EEx9V0XnEgQv_YIKEpEYtR7N06-9M4sFHqj-ScjUllly43RTyXa1vGyKwtHNhfwjXmYPu9oIGIjsdKe-a2aGZStuh6aSYVcFF2-KXcfwlHbTwxulYPn78GQkl6JfXOb6QzSxqum-xoK0XGiJz7GLM4X_GmyBu8PDvfe_eT8hB6P0Xib0VP6j4jKPmbX9GInrlj92IKgWVjLb3WHLHA07a1GiBXGH-A";
   const JWT_TOKEN = localStorage.getItem("token");
 
   useEffect(() => {
+    // 사용자의 캐릭터 목록을 가져옵니다.
     axios
       .get("/api/character/get-chars", {
         headers: {
@@ -36,6 +39,23 @@ const Category3 = () => {
           .then((response) => {
             console.log(response.data);
           });
+      });
+
+    // 사용자 스케줄 정보를 가져옵니다.
+    axios
+      .get("/api/schedule/get/user-schedules", {
+        headers: {
+          Authorization: `Bearer ${JWT_TOKEN}`,
+        },
+        params: {
+          characterIds: characterSchedule.map((data) => data.id), // 모든 캐릭터 ID를 가져오는거
+        },
+      })
+      .then((response) => {
+        setUserSchedules(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching user schedules:", error);
       });
   }, []);
 
@@ -94,6 +114,9 @@ const Category3 = () => {
       <Accordion defaultActiveKey="0">
         {Array.isArray(characterSchedule) ? (
           characterSchedule.map((data) => {
+            const userSchedule = userSchedules.find(
+              (schedule) => schedule.id === data.id
+            );
             return (
               <Accordion.Item eventKey={data.id} key={data.id}>
                 <Accordion.Header>
@@ -103,13 +126,16 @@ const Category3 = () => {
                   <Form>
                     <div className="character-body-div">
                       {Object.keys(data.scheduleDto).map((key) => {
-                        if (key === "id") return null; // id 필드는 제외
+                        if (key === "id") return null;
+                        const isChecked = userSchedule
+                          ? userSchedule[key]
+                          : false;
                         return (
                           <Form.Group key={key} as={Col} controlId={key}>
                             <Form.Check
                               type="checkbox"
                               label={key}
-                              defaultChecked={data.scheduleDto[key]}
+                              defaultChecked={isChecked}
                             />
                           </Form.Group>
                         );
