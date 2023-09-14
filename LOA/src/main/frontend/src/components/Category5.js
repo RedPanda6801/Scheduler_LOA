@@ -79,9 +79,9 @@ const Category4 = () => {
           ))}
         </select>
         <button onClick={() => handleCrewMemberClick(selectedCrewMember)}>
-          콘텐츠 진행 현황 확인
+          컨텐츠 진행 현황 확인
         </button>
-        <p>콘텐츠 진행 현황: {contentProgress}</p>
+        <p>컨텐츠 진행 현황: {contentProgress}</p>
       </div>
     </div>
   );
