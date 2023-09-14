@@ -3,7 +3,6 @@ import axios from "axios";
 import Accordion from "react-bootstrap/Accordion";
 import { Form, Col } from "react-bootstrap";
 
-const API_URL = "http://localhost:8005"; // URL 어려워서 선언해 버리기~
 const API_KEY =
   "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IktYMk40TkRDSTJ5NTA5NWpjTWk5TllqY2lyZyIsImtpZCI6IktYMk40TkRDSTJ5NTA5NWpjTWk5TllqY2lyZyJ9.eyJpc3MiOiJodHRwczovL2x1ZHkuZ2FtZS5vbnN0b3ZlLmNvbSIsImF1ZCI6Imh0dHBzOi8vbHVkeS5nYW1lLm9uc3RvdmUuY29tL3Jlc291cmNlcyIsImNsaWVudF9pZCI6IjEwMDAwMDAwMDAwMjkxMDMifQ.pzyW3e9arSfzt83LULmVxs0RvBqlm27P1meE6KikBZW7JonoCYxzU7_rFRg8Kmn4Z7qVZ5u7Rn4DYtwZjtruP4dlTmOI229lpsCFs9tBj81rcs1sVD-zzep0EEx9V0XnEgQv_YIKEpEYtR7N06-9M4sFHqj-ScjUllly43RTyXa1vGyKwtHNhfwjXmYPu9oIGIjsdKe-a2aGZStuh6aSYVcFF2-KXcfwlHbTwxulYPn78GQkl6JfXOb6QzSxqum-xoK0XGiJz7GLM4X_GmyBu8PDvfe_eT8hB6P0Xib0VP6j4jKPmbX9GInrlj92IKgWVjLb3WHLHA07a1GiBXGH-A";
 const Category3 = () => {
@@ -21,7 +20,7 @@ const Category3 = () => {
     const JWT_TOKEN = localStorage.getItem("token");
 
     axios
-      .get(`${API_URL}/api/character/get-chars`, {
+      .get(`/api/character/get-chars`, {
         headers: {
           Authorization: `Bearer ${JWT_TOKEN}`,
         },
@@ -31,7 +30,7 @@ const Category3 = () => {
       });
 
     axios
-      .get(`${API_URL}/api/schedule/get/user-schedules`, {
+      .get(`/api/schedule/get/user-schedules`, {
         headers: {
           Authorization: `Bearer ${JWT_TOKEN}`,
         },
@@ -75,7 +74,7 @@ const Category3 = () => {
         akkan: true,
       };
 
-      await axios.post(`${API_URL}/api/schedule/check`, body, {
+      await axios.post(`/api/schedule/check`, body, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -97,7 +96,7 @@ const Category3 = () => {
 
     try {
       await axios.post(
-        `${API_URL}/api/schedule/reset`,
+        `/api/schedule/reset`,
         {},
         {
           headers: {

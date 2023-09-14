@@ -11,25 +11,21 @@ import lombok.*;
 public class ScheduleDto {
     private Integer id;
 
-    private Boolean valtan;
+    private Integer valtan;
 
-    private Boolean biakiss;
+    private Integer biakiss;
 
-    private Boolean kuke;
+    private Integer kuke;
 
-    private Boolean abrel12;
+    private Integer abrel;
 
-    private Boolean abrel34;
+    private Integer akkan;
 
-    private Boolean abrel56;
+    private Integer kkayangel;
 
-    private Boolean akkan;
+    private Integer sanghatop;
 
-    private Boolean kkayangel;
-
-    private Boolean sanghatop;
-
-    private Boolean khamen;
+    private Integer kamen;
 
     private Integer userId;
 
@@ -39,13 +35,11 @@ public class ScheduleDto {
                 .valtan(entity.getValtan())
                 .biakiss(entity.getBiakiss())
                 .kuke(entity.getKuke())
-                .abrel12(entity.getAbrel12())
-                .abrel34(entity.getAbrel34())
-                .abrel56(entity.getAbrel56())
+                .abrel(entity.getAbrel())
                 .akkan(entity.getAkkan())
                 .kkayangel(entity.getKkayangel())
                 .sanghatop(entity.getSanghatop())
-                .khamen(entity.getKhamen())
+                .kamen(entity.getKamen())
                 .build();
     }
 }

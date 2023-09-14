@@ -16,25 +16,21 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Boolean valtan;
+    private Integer valtan;
 
-    private Boolean biakiss;
+    private Integer biakiss;
 
-    private Boolean kuke;
+    private Integer kuke;
 
-    private Boolean abrel12;
+    private Integer abrel;
 
-    private Boolean abrel34;
+    private Integer akkan;
 
-    private Boolean abrel56;
+    private Integer kkayangel;
 
-    private Boolean akkan;
+    private Integer sanghatop;
 
-    private Boolean kkayangel;
-
-    private Boolean sanghatop;
-
-    private Boolean khamen;
+    private Integer kamen;
 
     @OneToOne(mappedBy = "schedule")
     private CharacterInfo characterinfo;
@@ -45,13 +41,11 @@ public class Schedule {
                 .valtan(dto.getValtan())
                 .biakiss(dto.getBiakiss())
                 .kuke(dto.getKuke())
-                .abrel12(dto.getAbrel12())
-                .abrel34(dto.getAbrel34())
-                .abrel56(dto.getAbrel56())
+                .abrel(dto.getAbrel())
                 .akkan(dto.getAkkan())
                 .kkayangel(dto.getKkayangel())
                 .sanghatop(dto.getSanghatop())
-                .khamen(dto.getKhamen())
+                .kamen(dto.getKamen())
                 .build();
     }
 
@@ -59,13 +53,11 @@ public class Schedule {
         if(dto.getValtan() != null) this.setValtan(dto.getValtan());
         if(dto.getBiakiss() != null) this.setBiakiss(dto.getBiakiss());
         if(dto.getKuke() != null) this.setKuke(dto.getKuke());
-        if(dto.getAbrel12() != null) this.setAbrel12(dto.getAbrel12());
-        if(dto.getAbrel34() != null) this.setAbrel34(dto.getAbrel34());
-        if(dto.getAbrel56() != null) this.setAbrel56(dto.getAbrel56());
+        if(dto.getAbrel() != null) this.setAbrel(dto.getAbrel());
         if(dto.getAkkan() != null) this.setAkkan(dto.getAkkan());
         if(dto.getKkayangel() != null) this.setKkayangel(dto.getKkayangel());
         if(dto.getSanghatop() != null) this.setSanghatop(dto.getSanghatop());
-        if(dto.getKhamen() != null) this.setKhamen(dto.getKhamen());
+        if(dto.getKamen() != null) this.setKamen(dto.getKamen());
     }
 }
 

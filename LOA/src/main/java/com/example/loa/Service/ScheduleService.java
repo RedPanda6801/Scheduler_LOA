@@ -22,16 +22,14 @@ public class ScheduleService {
     CharacterInfoRepository characterInfoRepository;
     public Schedule init(){
         Schedule schedule = new Schedule();
-        schedule.setValtan(false);
-        schedule.setBiakiss(false);
-        schedule.setKuke(false);
-        schedule.setAbrel12(false);
-        schedule.setAbrel34(false);
-        schedule.setAbrel56(false);
-        schedule.setAkkan(false);
-        schedule.setKkayangel(false);
-        schedule.setKhamen(false);
-        schedule.setSanghatop(false);
+        schedule.setValtan(0);
+        schedule.setBiakiss(0);
+        schedule.setKuke(0);
+        schedule.setAbrel(0);
+        schedule.setAkkan(0);
+        schedule.setKkayangel(0);
+        schedule.setKamen(0);
+        schedule.setSanghatop(0);
         try{
             Schedule result = scheduleRepository.save(schedule);
             return result;
