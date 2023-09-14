@@ -36,8 +36,7 @@ public class JWTService {
     public Claims checkAuthorizationHeader (HttpServletRequest request){
         try{
             String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-            String token = authorizationHeader.split(" ")[1];
-            if(token.equals("null")){
+            if(authorizationHeader.equals("Bearer null")){
                 return null;
             }
             return parseJwtToken(authorizationHeader);

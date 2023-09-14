@@ -26,10 +26,15 @@ const Category3 = () => {
         },
       })
       .then((response) => {
-        setCharacterSchedule(response.data);
-      });
+        setCharacterSchedule(response.data.data);
+      }).catch((error)=> {
+        if(error.response.status === 403){
+          alert("로그인 필요");
+        }
+    });
 
-    axios
+    // 이 API는 쓸모가 없음 위에서 캐릭터별 스케줄 조회 하는중
+    /*axios
       .get(`/api/schedule/get/user-schedules`, {
         headers: {
           Authorization: `Bearer ${JWT_TOKEN}`,
@@ -39,11 +44,13 @@ const Category3 = () => {
         },
       })
       .then((response) => {
-        setUserSchedules(response.data);
+        setUserSchedules(response.data.data);
       })
       .catch((error) => {
         console.error("Error fetching user schedules:", error);
-      });
+      });*/
+
+
   }, []);
 
   const getCharacterSiblings = async (characterName) => {
