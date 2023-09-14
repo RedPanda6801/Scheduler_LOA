@@ -1,11 +1,14 @@
 package com.example.loa.Controller;
 
 import com.example.loa.Dto.CharacterInfoDto;
+import com.example.loa.Dto.ResponseDto;
 import com.example.loa.Service.CharacterService;
 import com.example.loa.Service.JWTService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,76 +28,97 @@ public class CharacterController {
     // 캐릭터 초기 세팅
     @PostMapping("/api/character/init")
     @ResponseBody
-    public String initCharacters(HttpServletRequest request, @RequestBody List<CharacterInfoDto> characterInfoDtoList){
-        // 로그인 정보 확인
+    public ResponseEntity<ResponseDto> initCharacters(HttpServletRequest request, @RequestBody List<CharacterInfoDto> characterInfoDtoList){
+        // JWT 확인
         Claims token = jwtService.jwtCheckFunc(request);
-        // 유저 확인
-        if(token == null) return null;
+        if(token == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         Integer id = Integer.parseInt(token.get("id").toString());
-
-        boolean isInit = characterService.init(id, characterInfoDtoList);
-        if(!isInit){
-            System.out.println("[Error] Init Error");
-            return "Init Failed";
+        // Service 호출
+        ResponseDto response = characterService.init(id, characterInfoDtoList);
+        // 응답값 처리
+        if(response.getStatus() == HttpStatus.BAD_REQUEST){
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }else if(response.getStatus() == HttpStatus.INTERNAL_SERVER_ERROR){
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return "Init Success";
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     // 계정 단위 캐릭터 조회
     @GetMapping("/api/character/get-chars")
     @ResponseBody
-    public List<CharacterInfoDto> getCharacters(HttpServletRequest request){
-        // 유저 정보 확인
+    public ResponseEntity<ResponseDto> getCharacters(HttpServletRequest request){
+        // JWT 확인
         Claims token = jwtService.jwtCheckFunc(request);
-        if(token == null) return null;
+        if(token == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         Integer id = Integer.parseInt(token.get("id").toString());
+        // 유저 메인캐릭터 가져오기
         String charName = token.get("mainChar").toString();
-        // 로그인한 유저의 캐릭터들 가져오기
-        List<CharacterInfoDto> characters = characterService.getCharacterByUserId(id, charName);
-        if(characters == null) System.out.println("[Alert] No Characters");
-        System.out.println("[Alert] Get Characters Success");
-        return characters;
+        // Service 호출
+        List<CharacterInfoDto> dtoList = characterService.getCharacterByUserId(id, charName);
+        // 응답값 처리
+        ResponseDto response = new ResponseDto();
+        if(dtoList == null){
+            response.setResponse("Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.setResponse("Search Success", dtoList, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // 스케줄 관리 캐릭터 번경
     @PostMapping("/api/character/change-chars")
     @ResponseBody
-    public String changeCharacters(HttpServletRequest request, @RequestBody List<CharacterInfoDto> characters){
-        // 유저 정보 확인
+    public ResponseEntity<ResponseDto> changeCharacters(HttpServletRequest request, @RequestBody List<CharacterInfoDto> characters){
+        // JWT 확인
         Claims token = jwtService.jwtCheckFunc(request);
-        if(token == null) return null;
+        if(token == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         Integer id = Integer.parseInt(token.get("id").toString());
-        // 기존 캐릭터들 가져오기
-        boolean isUpdate = characterService.changeCharacters(id, characters);
-
-        if(!isUpdate) return "Update Failed";
-        return "Update Success";
+        // Service 호출
+        ResponseDto response = characterService.changeCharacters(id, characters);
+        // 응답값 처리
+        if(response.getStatus() == HttpStatus.BAD_REQUEST){
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }else if(response.getStatus() == HttpStatus.INTERNAL_SERVER_ERROR){
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // 캐릭터 단일 수정
     @PostMapping("api/character/modify-char")
     @ResponseBody
-    public String modifyCharacter(HttpServletRequest request, @RequestBody CharacterInfoDto character){
-        // 유저 정보 확인
+    public ResponseEntity<ResponseDto> modifyCharacter(HttpServletRequest request, @RequestBody CharacterInfoDto character){
+        // JWT 확인
         Claims token = jwtService.jwtCheckFunc(request);
-        if(token == null) return null;
+        if(token == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 
-        // 캐릭터 수정
-        Boolean isUpdated = characterService.modifyCharacter(character);
-        if(!isUpdated) return "Update Failed";
-        return "Update Success";
+        // 캐릭터 단일 수정
+        ResponseDto response = characterService.modifyCharacter(character);
+        // 응답값 처리
+        if(response.getStatus() == HttpStatus.BAD_REQUEST){
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }else if(response.getStatus() == HttpStatus.INTERNAL_SERVER_ERROR){
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // 계정 단위 캐릭터 정보 최신화
     @PostMapping("api/character/update-chars")
     @ResponseBody
-    public String updateCharacters(HttpServletRequest request, @RequestBody List<CharacterInfoDto> characters){
-        // 유저 정보 확인
+    public ResponseEntity<ResponseDto> updateCharacters(HttpServletRequest request, @RequestBody List<CharacterInfoDto> characters){
+        // JWT 확인
         Claims token = jwtService.jwtCheckFunc(request);
-        if(token == null) return null;
+        if(token == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         // 캐릭터 최신화
-        Boolean isUpdated = characterService.updateCharacters(characters);
-        if(!isUpdated) return "Update Failed";
-        return "Update Success";
+        ResponseDto response = characterService.updateCharacters(characters);
+        // 응답값 처리
+        if(response.getStatus() == HttpStatus.BAD_REQUEST){
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }else if(response.getStatus() == HttpStatus.INTERNAL_SERVER_ERROR){
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

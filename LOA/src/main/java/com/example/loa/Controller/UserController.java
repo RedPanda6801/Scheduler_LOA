@@ -1,6 +1,7 @@
 package com.example.loa.Controller;
 
 import com.example.loa.Dto.ApiDto;
+import com.example.loa.Dto.ResponseDto;
 import com.example.loa.Dto.UserDto;
 import com.example.loa.Entity.User;
 import com.example.loa.Service.JWTService;
@@ -8,6 +9,8 @@ import com.example.loa.Service.UserService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,96 +42,115 @@ public class UserController {
     // User 로그인
     @PostMapping("/api/auth/login")
     @ResponseBody
-    public String login(@RequestBody UserDto userDto){
+    public ResponseEntity<ResponseDto> login(@RequestBody UserDto userDto){
 
-        String token = userService.userAuth(userDto);
+        ResponseDto response = userService.userAuth(userDto);
 
         // 예외처리 및 응답
-        if(token.equals("Null Error")){
-            return "Id or Password Requried";
-        }else if(token.equals("Id Error")){
-            return "Id is Incorrected";
-        }else if(token.equals("Password Error")){
-            return "Check Your Password";
-        }else return token;
+        if(response.getStatus() == HttpStatus.BAD_REQUEST){
+            return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+        }else{
+            return new ResponseEntity(response, HttpStatus.OK);
+        }
     }
 
     // User 회원가입
     @PostMapping("/api/auth/sign") // 회원가입
     @ResponseBody
-    public String signUp(@RequestBody UserDto userDto){
+    public ResponseEntity<ResponseDto> signUp(@RequestBody UserDto userDto){
 
         // user의 id로 중복 조회
         User userTmp = userService.getByUserId(userDto.getUserId());
 
         if(userTmp != null) {   // 계정이 있을 경우
-            return "Account Already Existed";
+            ResponseDto response = new ResponseDto();
+            response.setResponse("User already Existed", null, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
-        boolean isCreated = userService.create(User.toEntity(userDto));
+        ResponseDto response = userService.create(User.toEntity(userDto));
 
-        if(!isCreated){
-            return "Create Failed";
+        if(response.getStatus() == HttpStatus.BAD_REQUEST){
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }else if(response.getStatus() == HttpStatus.INTERNAL_SERVER_ERROR){
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return "Create Success";
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     // User 개인정보 수정
     @PostMapping("/api/user/update/{id}")
     @ResponseBody
-    public String updateUser(@PathVariable Integer id, @RequestBody UserDto userDto){
-        boolean isUpdate = userService.update(id, userDto);
-        if(!isUpdate) return "Update Failed";
-        return "Update Success";
+    public ResponseEntity<ResponseDto> updateUser(@PathVariable Integer id, @RequestBody UserDto userDto){
+
+        ResponseDto response = userService.update(id, userDto);
+
+        if(response.getStatus() == HttpStatus.BAD_REQUEST){
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }else if(response.getStatus() == HttpStatus.INTERNAL_SERVER_ERROR){
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // User 개인정보 삭제
     @PostMapping("/api/user/delete")
     @ResponseBody
-    public String deleteUser(HttpServletRequest request){
+    public ResponseEntity<ResponseDto> deleteUser(HttpServletRequest request){
         // 로그인 정보 확인
         Claims token = jwtService.checkAuthorizationHeader(request);
-        if(token == null){
-            System.out.println("[Error] Token is Missed");
-            return null;
-        }
+        if(token == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         // 유저 확인
         Integer id = Integer.parseInt(token.get("id").toString());
 
-        boolean isDelete = userService.delete(id);
-        if(!isDelete) return "Delete Failed";
-        return "Delete Success";
+        ResponseDto response = userService.delete(id);
+
+        if(response.getStatus() == HttpStatus.BAD_REQUEST){
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }else if(response.getStatus() == HttpStatus.INTERNAL_SERVER_ERROR){
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // LOA API KEY 추가
     @PostMapping("/api/user/set-key")
     @ResponseBody
-    public String setUserAPI(HttpServletRequest request, @RequestBody ApiDto dto){
+    public ResponseEntity<ResponseDto> setUserAPI(HttpServletRequest request, @RequestBody ApiDto dto){
+        // JWT 확인
         Claims token = jwtService.jwtCheckFunc(request);
-        if(token == null){
-            System.out.println("Token is Expired");
-            return null;
-        }
+        if(token == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         String id = token.get("id").toString();
 
-        Boolean setting = userService.setKey(dto.getKey(), id);
-        if(!setting) return "Save Failed";
-        else return "Save Success";
+        // Service 호출
+        ResponseDto response = userService.setKey(dto.getKey(), id);
+
+        // 응답값 처리
+        if(response.getStatus() == HttpStatus.BAD_REQUEST){
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }else if(response.getStatus() == HttpStatus.INTERNAL_SERVER_ERROR){
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // LOA API KEY 조회
     @GetMapping("/api/user/get-key")
     @ResponseBody
-    public String getUserAPI(HttpServletRequest request){
+    public ResponseEntity<ResponseDto> getUserAPI(HttpServletRequest request){
+        // JWT 확인
         Claims token = jwtService.jwtCheckFunc(request);
-        if(token == null){
-            System.out.println("Token is Expired");
-            return null;
-        }
+        if(token == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         String id = token.get("id").toString();
 
-        String key = userService.getKey(id);
-        if(key == null) return null;
-        else return key;
+        // Service 호출
+        ResponseDto response = userService.getKey(id);
+        // 응답값 처리
+        if(response.getStatus() == HttpStatus.BAD_REQUEST){
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }else if(response.getStatus() == HttpStatus.INTERNAL_SERVER_ERROR){
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

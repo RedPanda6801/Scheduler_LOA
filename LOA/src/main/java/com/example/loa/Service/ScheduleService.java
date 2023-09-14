@@ -1,11 +1,13 @@
 package com.example.loa.Service;
 
+import com.example.loa.Dto.ResponseDto;
 import com.example.loa.Dto.ScheduleDto;
 import com.example.loa.Entity.CharacterInfo;
 import com.example.loa.Entity.Schedule;
 import com.example.loa.Repository.CharacterInfoRepository;
 import com.example.loa.Repository.ScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,28 +40,41 @@ public class ScheduleService {
             return null;
         }
     }
+
     @Transactional
-    public Boolean checkSchedule(ScheduleDto dto){
+    public ResponseDto checkSchedule(ScheduleDto dto){
+        // 응답값 객체 생성
+        ResponseDto response = new ResponseDto();
+        // 스케줄 조회
         Optional<Schedule> scheduleTmp = scheduleRepository.findById(dto.getId());
         if(!scheduleTmp.isPresent()){
             System.out.println("[Error] No Data Error");
-            return false;
+            response.setResponse("Not Existed", HttpStatus.BAD_REQUEST);
+            return response;
         }
+        Schedule schedule = scheduleTmp.get();
+        // 수정
         try{
-            Schedule schedule = scheduleTmp.get();
             schedule.update(dto);
-            return true;
         }catch(Exception e){
             System.out.println(String.format("[Error] %s", e));
-            return null;
+            response.setResponse("Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
+            return response;
         }
+        response.setResponse("Check Success", HttpStatus.OK);
+        return response;
     }
-    public Boolean resetSchedule(Integer id) {
+
+    public ResponseDto resetSchedule(Integer id) {
+        // 응답값 객체 생성
+        ResponseDto response = new ResponseDto();
+
         // 유저의 캐릭터 찾기
         List<CharacterInfo> characters = characterInfoRepository.findAllByUserId(id);
         if (characters.size() == 0) {
             System.out.println("[Error] No Character Existed");
-            return false;
+            response.setResponse("Not Existed", HttpStatus.BAD_REQUEST);
+            return response;
         }
         try {
             // 캐릭터 별 스캐줄 삭제 -> 생성
@@ -74,15 +89,20 @@ public class ScheduleService {
                 // 데이터 삭제
                 scheduleRepository.delete(deleteData);
             }
-            System.out.println("[Alert] Reset Success");
-            return true;
-        } catch (Exception e) {
+        }catch(Exception e){
             System.out.println(String.format("[Error] %s", e));
-            return false;
+            response.setResponse("Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
+            return response;
         }
+        System.out.println("[Alert] Reset Success");
+        response.setResponse("Reset Success", HttpStatus.OK);
+        return response;
     }
 
-    public List<ScheduleDto> getUserSchedule(List<Integer> ids){
+    public ResponseDto getUserSchedule(List<Integer> ids){
+        // 응답값 객체 생성
+        ResponseDto response = new ResponseDto();
+
         // 유저 정보로 캐릭터 가져오기
         List<ScheduleDto> dtos = new ArrayList<>();
         try{
@@ -92,12 +112,14 @@ public class ScheduleService {
                 dtos.add(ScheduleDto.toDto(schedule));
             }
         }catch(Exception e){
-            System.out.println(String.format("[Error] %s",e));
-            return null;
+            System.out.println(String.format("[Error] %s", e));
+            response.setResponse("Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
+            return response;
         }
         if(dtos.size() == 0){
             System.out.println("[Alert] No Data Existed");
         }
-        return dtos;
+        response.setResponse("Search Success", dtos, HttpStatus.OK);
+        return response;
     }
 }

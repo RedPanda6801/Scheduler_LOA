@@ -1,11 +1,13 @@
 package com.example.loa.Service;
 
 import com.example.loa.Dto.CharacterInfoDto;
+import com.example.loa.Dto.ResponseDto;
 import com.example.loa.Entity.CharacterInfo;
 import com.example.loa.Entity.Schedule;
 import com.example.loa.Entity.User;
 import com.example.loa.Repository.CharacterInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,12 +23,15 @@ public class CharacterService {
     private UserService userService;
     @Autowired
     private ScheduleService scheduleService;
-    public boolean init(Integer id, List<CharacterInfoDto> characterInfoDtoList){
+    public ResponseDto init(Integer id, List<CharacterInfoDto> characterInfoDtoList){
+        // 응답값 객체 생성
+        ResponseDto response = new ResponseDto();
         // user 정보 가져오기
         Optional<User> userTmp = userService.getById(id);
         if(!userTmp.isPresent()) {
             System.out.println("[Error] No User Existed");
-            return false;
+            response.setResponse("Not Existed", HttpStatus.BAD_REQUEST);
+            return response;
         }
         User user = userTmp.get();
 
@@ -37,26 +42,30 @@ public class CharacterService {
                 // dto 내용 검사
                 if(dto.getLevel() == null || dto.getJob() == null || dto.getCharName() == null){
                     System.out.println(String.format("[Error] Data Empty Error"));
-                    return false;
+                    response.setResponse("No Data", HttpStatus.BAD_REQUEST);
+                    return response;
                 }
+                // 캐릭터의 스케줄 생성
                 Schedule schedule = scheduleService.init();
                 CharacterInfo character = CharacterInfo.toEntity(dto, user, schedule);
                 characters.add(character);
             }
         }catch(Exception e){
             System.out.println(String.format("[Error] %s",e));
-            return false;
+            response.setResponse("Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
+            return response;
         }
-
 
         // 매핑한 캐릭터 DB에 저장
         try{
             characterInfoRepository.saveAll(characters);
         }catch(Exception e){
             System.out.println(String.format("[Error] %s",e));
-            return false;
+            response.setResponse("Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
+            return response;
         }
-        return true;
+        response.setResponse("Init Success", HttpStatus.CREATED);
+        return response;
     }
 
     // 개인 케릭터 및 스케줄 조회
@@ -80,15 +89,19 @@ public class CharacterService {
     }
 
     // 검색 방법 수정 필요
-    public boolean changeCharacters(Integer id, List<CharacterInfoDto> characters){
+    public ResponseDto changeCharacters(Integer id, List<CharacterInfoDto> characters){
+        // 응답값 객체 생성
+        ResponseDto response = new ResponseDto();
+
         // 캐릭터에 매핑할 유저 조회
         Optional<User> userOptional = userService.getById(id);
         if(!userOptional.isPresent()) {
             System.out.println("[Error] No User Existed");
-            return false;
+            response.setResponse("Not Existed", HttpStatus.BAD_REQUEST);
+            return response;
         }
         User user = userOptional.get();
-
+        // 기존 캐릭터들을 조회
         List<CharacterInfoDto> originCharacters = getCharacterByUserId(id, user.getCharName());
         // 갱신할 캐릭터들 List 생성
         List<String> addCharNames = new ArrayList<>();
@@ -96,7 +109,8 @@ public class CharacterService {
             // 부족한 정보에 대한 예외처리
             if(dto.getCharName() == null || dto.getJob() == null || dto.getLevel() == null){
                 System.out.println("[Error] Data Empty Error");
-                return false;
+                response.setResponse("No Data Error", HttpStatus.BAD_REQUEST);
+                return response;
             }
             addCharNames.add(dto.getCharName());
         }
@@ -119,7 +133,8 @@ public class CharacterService {
             }else{
                 // 추가할 데이터가 없으면 알림을 보내고 성공처리
                 System.out.println("[Alert] No data Changed");
-                return true;
+                response.setResponse("No Data Changed", HttpStatus.OK);
+                return response;
             }
             // 추가된 캐릭터들의 Dto를 Entity로 변환
             List<CharacterInfo> addCharacters = new ArrayList<>();
@@ -133,23 +148,31 @@ public class CharacterService {
             if(addCharacters.size() > 0) {
                 characterInfoRepository.saveAll(addCharacters);
                 System.out.println("[Alert] Update Success");
-                return true;
+                response.setResponse("Update Success", HttpStatus.OK);
+                return response;
             }else{
-                return false;
+                // 추가할 캐릭터 배열이 비어있으면 예외처리
+                response.setResponse("No Data Changed", HttpStatus.BAD_REQUEST);
+                return response;
             }
         }catch(Exception e){
-            System.out.println(String.format("[Error] %s", e));
-            return false;
+            System.out.println(String.format("[Error] %s",e));
+            response.setResponse("Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
+            return response;
         }
     }
     // 캐릭터 단일 수정
     @Transactional
-    public Boolean modifyCharacter(CharacterInfoDto dto){
+    public ResponseDto modifyCharacter(CharacterInfoDto dto){
+        // 응답값 객체 생성
+        ResponseDto response = new ResponseDto();
+
         // 기존 캐릭터 정보 불러오기
         Optional<CharacterInfo> characterTmp = characterInfoRepository.findById(dto.getId());
         if(!characterTmp.isPresent()){
             System.out.println("[Error] Find Character Error");
-            return false;
+            response.setResponse("Not Existed", HttpStatus.BAD_REQUEST);
+            return response;
         }
         CharacterInfo character = characterTmp.get();
 
@@ -159,27 +182,36 @@ public class CharacterService {
             String name = dto.getCharName();
             String job = dto.getJob();
             character.update(name, level, job);
-            return true;
         }catch(Exception e){
             System.out.println(String.format("[Error] %s", e));
-            return false;
+            response.setResponse("Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
+            return response;
         }
+        response.setResponse("Update Success", HttpStatus.OK);
+        return response;
     }
 
     @Transactional
-    public Boolean updateCharacters(List<CharacterInfoDto> dtos){
+    public ResponseDto updateCharacters(List<CharacterInfoDto> dtos){
+        // 응답값 객체 선언
+        ResponseDto response = new ResponseDto();
+
         // 배열 선언
         List<CharacterInfo> charArr = new ArrayList<>();
         List<CharacterInfoDto> changeArr = new ArrayList<>();
+
         for(CharacterInfoDto dto : dtos){
-            // 형식에 맞지 않는 dto에 대한 예외처리
+            // 수정값이 없는 dto는 넘기기
             if(dto.getCharName() == null || dto.getLevel() == null || dto.getJob() == null){
-                System.out.println(String.format("[Error] Data Empty Error"));
+                continue;
             }
             // 현재 캐릭터들의 정보 찾기
             Optional<CharacterInfo> charTmp = characterInfoRepository.findById(dto.getId());
+            // 캐릭터를 찾지 못했으면 예외처리
             if(!charTmp.isPresent()){
                 System.out.println(String.format("[Alert] No Character : %s", dto.getCharName()));
+                response.setResponse("Not Existed", HttpStatus.BAD_REQUEST);
+                return response;
             }else{
                 CharacterInfo charElement = charTmp.get();
                 // 값이 변하지 않은 것은 수정 X
@@ -195,11 +227,13 @@ public class CharacterService {
                 CharacterInfoDto newObject = changeArr.get(i);
                 charArr.get(i).update(newObject.getCharName(), newObject.getLevel(), newObject.getJob());
             }
-            return true;
         }catch(Exception e){
             System.out.println(String.format("[Error] %s", e));
-            return false;
+            response.setResponse("Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
+            return response;
         }
+        response.setResponse("Update Success", HttpStatus.OK);
+        return response;
     }
 
 }

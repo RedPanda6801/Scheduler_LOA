@@ -1,19 +1,15 @@
 package com.example.loa.Controller;
 
-import com.example.loa.Dto.CharacterInfoDto;
-import com.example.loa.Dto.CrewApplyDto;
-import com.example.loa.Dto.CrewDto;
-import com.example.loa.Dto.CrewMemberDto;
+import com.example.loa.Dto.*;
 import com.example.loa.Service.CrewService;
 import com.example.loa.Service.JWTService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Controller
 public class CrewController {
@@ -26,111 +22,162 @@ public class CrewController {
     // 크루 존재 여부
     @GetMapping("/api/crew/is-crew/{crewName}")
     @ResponseBody
-    public Boolean isCrew(HttpServletRequest request, @PathVariable String crewName){
-        // 유저 정보 확인
+    public ResponseEntity<ResponseDto> isCrew(HttpServletRequest request, @PathVariable String crewName){
+        // JWT 확인
         Claims token = jwtService.jwtCheckFunc(request);
-        if(token == null) return null;
-
+        if(token == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        // Service 호출
         Boolean isExisted = crewService.isCrew(crewName);
-        if(!isExisted) return false;
-        return true;
+        ResponseDto response = new ResponseDto();
+        // 크루가 없으면 True
+        response.setResponse("isCrew", !isExisted, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // 새 크루 생성
     @PostMapping("/api/crew/create")
     @ResponseBody
-    public String addCrew(HttpServletRequest request, @RequestBody CrewDto dto){
-        // 유저 정보 확인
+    public ResponseEntity<ResponseDto> addCrew(HttpServletRequest request, @RequestBody CrewDto dto){
+        // JWT 확인
         Claims token = jwtService.jwtCheckFunc(request);
-        if(token == null) return null;
-
+        if(token == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         Integer id = Integer.parseInt(token.get("id").toString());
-        Boolean isCreated = crewService.addCrew(id, dto.getName());
-        if(!isCreated) return "Create Failed";
-        return "Create Success";
+        // Service 호출
+        ResponseDto response = crewService.addCrew(id, dto.getName());
+        // 응답값 처리
+        if(response.getStatus() == HttpStatus.BAD_REQUEST){
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }else if(response.getStatus() == HttpStatus.INTERNAL_SERVER_ERROR){
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // 크루 지원서 작성
     @PostMapping("/api/crew/apply-crew")
     @ResponseBody
-    public String applyCrew(HttpServletRequest request, @RequestBody CrewApplyDto applyDto){
-        // 유저 정보 확인
+    public ResponseEntity<ResponseDto> applyCrew(HttpServletRequest request, @RequestBody CrewApplyDto applyDto){
+        // JWT 확인
         Claims token = jwtService.jwtCheckFunc(request);
-        if(token == null) return null;
-
-        Boolean isApplied = crewService.applyCrew(applyDto);
-        if(!isApplied) return "Apply Failed";
-        return "Apply Success";
+        if(token == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        // Service 호출
+        ResponseDto response = crewService.applyCrew(applyDto);
+        // 응답값 처리
+        if(response.getStatus() == HttpStatus.BAD_REQUEST){
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }else if(response.getStatus() == HttpStatus.INTERNAL_SERVER_ERROR){
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // 크루 지원서 조회
     @GetMapping("/api/crew/get-applies/{crewName}")
     @ResponseBody
-    public List<CrewApplyDto> getCrewApplies(HttpServletRequest request, @PathVariable String crewName){
-        // 유저 정보 확인
+    public ResponseEntity<ResponseDto> getCrewApplies(HttpServletRequest request, @PathVariable String crewName){
+        // JWT 확인
         Claims token = jwtService.jwtCheckFunc(request);
-        if(token == null) return null;
-
+        if(token == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         Integer id = Integer.parseInt(token.get("id").toString());
-        List<CrewApplyDto> applies = crewService.getCrewApplies(id, crewName);
-        if(applies == null) System.out.println("[Alert] No Applies In Crew");
-        return applies;
-
+        // Service 호출
+        ResponseDto response = crewService.getCrewApplies(id, crewName);
+        // 응답값 처리
+        if(response.getStatus() == HttpStatus.BAD_REQUEST){
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }else if(response.getStatus() == HttpStatus.FORBIDDEN){
+            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+        }
+        else if(response.getStatus() == HttpStatus.INTERNAL_SERVER_ERROR){
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // 크루 지원서 반려
     @PostMapping("/api/crew/delete-applies/{applyId}")
     @ResponseBody
-    public String deleteCrewApply(HttpServletRequest request, @PathVariable String applyId){
-        // 유저 정보 확인
+    public ResponseEntity<ResponseDto> deleteCrewApply(HttpServletRequest request, @PathVariable String applyId){
+        // JWT 확인
         Claims token = jwtService.jwtCheckFunc(request);
-        if(token == null) return null;
-
+        if(token == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         Integer id = Integer.parseInt(token.get("id").toString());
-        Boolean isDeleted = crewService.deleteCrewApply(id, applyId);
-        if(!isDeleted) return "Delete Failed";
-        return "Delete Success";
+        // Service 호출
+        ResponseDto response = crewService.deleteCrewApply(id, applyId);
+        // 응답값 처리
+        if(response.getStatus() == HttpStatus.BAD_REQUEST){
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }else if(response.getStatus() == HttpStatus.FORBIDDEN){
+            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+        }
+        else if(response.getStatus() == HttpStatus.INTERNAL_SERVER_ERROR){
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 
     // 크루 인원 추가
     @PostMapping("/api/crew/add-member")
     @ResponseBody
-    public String addMember(HttpServletRequest request, @RequestBody CrewMemberDto dto){
-        // 유저 정보 확인
+    public ResponseEntity<ResponseDto> addMember(HttpServletRequest request, @RequestBody CrewMemberDto dto){
+        // JWT 확인
         Claims token = jwtService.jwtCheckFunc(request);
-        if(token == null) return null;
-
+        if(token == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         Integer id = Integer.parseInt(token.get("id").toString());
-        Boolean isAdder = crewService.addMember(id, dto);
-        if(!isAdder) return "Add Failed";
-        return "Add Success";
+        // Service 호출
+        ResponseDto response = crewService.addMember(id, dto);
+        // 응답값 처리
+        if(response.getStatus() == HttpStatus.BAD_REQUEST){
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }else if(response.getStatus() == HttpStatus.FORBIDDEN){
+            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+        }
+        else if(response.getStatus() == HttpStatus.INTERNAL_SERVER_ERROR){
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // 내 크루 검색
     @GetMapping("/api/crew/get-crew")
     @ResponseBody
-    public List<String> getMyCrew(HttpServletRequest request){
-        // 유저 정보 확인
+    public ResponseEntity<ResponseDto> getMyCrew(HttpServletRequest request){
+        // JWT 확인
         Claims token = jwtService.jwtCheckFunc(request);
-        if(token == null) return null;
-
+        if(token == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         Integer id = Integer.parseInt(token.get("id").toString());
-        List<String> result = crewService.getCrew(id);
-        if(result.size() == 0) System.out.println("[Alert] Data is Null");
-        return result;
+        // Service 호출
+        ResponseDto response = crewService.getCrew(id);
+        // 응답값 처리
+        if(response.getStatus() == HttpStatus.BAD_REQUEST){
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }else if(response.getStatus() == HttpStatus.FORBIDDEN){
+            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+        }
+        else if(response.getStatus() == HttpStatus.INTERNAL_SERVER_ERROR){
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // 크루 멤버 검색
     @GetMapping("/api/crew/get-members/{crew}")
     @ResponseBody
-    public List<List<CharacterInfoDto>> getCrewMembers(HttpServletRequest request, @PathVariable String crew){
-        // 유저 정보 확인
+    public ResponseEntity<ResponseDto> getCrewMembers(HttpServletRequest request, @PathVariable String crew){
+        // JWT 확인
         Claims token = jwtService.jwtCheckFunc(request);
-        if(token == null) return null;
-
-        List<List<CharacterInfoDto>> users = crewService.getCrewMembers(crew);
-        if(users.size() == 0) System.out.println("[Alert] Data is Null");
-        return users;
+        if(token == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        // Service 호출
+        ResponseDto response = crewService.getCrewMembers(crew);
+        // 응답값 처리
+        if(response.getStatus() == HttpStatus.BAD_REQUEST){
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }else if(response.getStatus() == HttpStatus.FORBIDDEN){
+            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+        }
+        else if(response.getStatus() == HttpStatus.INTERNAL_SERVER_ERROR){
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
