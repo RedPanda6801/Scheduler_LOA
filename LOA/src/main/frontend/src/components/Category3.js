@@ -1,54 +1,42 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Accordion from "react-bootstrap/Accordion";
-// import { Button } from "react-bootstrap"; 버튼은 잠깐 빼놓기
 import { Form, Col } from "react-bootstrap";
 
+const API_URL = "http://localhost:8005"; // URL 어려워서 선언해 버리기~
+const API_KEY =
+  "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IktYMk40TkRDSTJ5NTA5NWpjTWk5TllqY2lyZyIsImtpZCI6IktYMk40TkRDSTJ5NTA5NWpjTWk5TllqY2lyZyJ9.eyJpc3MiOiJodHRwczovL2x1ZHkuZ2FtZS5vbnN0b3ZlLmNvbSIsImF1ZCI6Imh0dHBzOi8vbHVkeS5nYW1lLm9uc3RvdmUuY29tL3Jlc291cmNlcyIsImNsaWVudF9pZCI6IjEwMDAwMDAwMDAwMjkxMDMifQ.pzyW3e9arSfzt83LULmVxs0RvBqlm27P1meE6KikBZW7JonoCYxzU7_rFRg8Kmn4Z7qVZ5u7Rn4DYtwZjtruP4dlTmOI229lpsCFs9tBj81rcs1sVD-zzep0EEx9V0XnEgQv_YIKEpEYtR7N06-9M4sFHqj-ScjUllly43RTyXa1vGyKwtHNhfwjXmYPu9oIGIjsdKe-a2aGZStuh6aSYVcFF2-KXcfwlHbTwxulYPn78GQkl6JfXOb6QzSxqum-xoK0XGiJz7GLM4X_GmyBu8PDvfe_eT8hB6P0Xib0VP6j4jKPmbX9GInrlj92IKgWVjLb3WHLHA07a1GiBXGH-A";
 const Category3 = () => {
   const [scheduleCheckResult, setScheduleCheckResult] = useState("");
   const [characterSchedule, setCharacterSchedule] = useState([]);
   const [resetResult, setResetResult] = useState("");
   const [characterId, setCharacterId] = useState("");
+  const [userSchedules, setUserSchedules] = useState([]);
 
-  const [userSchedules, setUserSchedules] = useState([]); // 사용자 스케줄 정보 추가
-
-  const API_KEY =
-    "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IktYMk40TkRDSTJ5NTA5NWpjTWk5TllqY2lyZyIsImtpZCI6IktYMk40TkRDSTJ5NTA5NWpjTWk5TllqY2lyZyJ9.eyJpc3MiOiJodHRwczovL2x1ZHkuZ2FtZS5vbnN0b3ZlLmNvbSIsImF1ZCI6Imh0dHBzOi8vbHVkeS5nYW1lLm9uc3RvdmUuY29tL3Jlc291cmNlcyIsImNsaWVudF9pZCI6IjEwMDAwMDAwMDAwMjkxMDMifQ.pzyW3e9arSfzt83LULmVxs0RvBqlm27P1meE6KikBZW7JonoCYxzU7_rFRg8Kmn4Z7qVZ5u7Rn4DYtwZjtruP4dlTmOI229lpsCFs9tBj81rcs1sVD-zzep0EEx9V0XnEgQv_YIKEpEYtR7N06-9M4sFHqj-ScjUllly43RTyXa1vGyKwtHNhfwjXmYPu9oIGIjsdKe-a2aGZStuh6aSYVcFF2-KXcfwlHbTwxulYPn78GQkl6JfXOb6QzSxqum-xoK0XGiJz7GLM4X_GmyBu8PDvfe_eT8hB6P0Xib0VP6j4jKPmbX9GInrlj92IKgWVjLb3WHLHA07a1GiBXGH-A";
-  const JWT_TOKEN = localStorage.getItem("token");
+  const [selectedCharacter, setSelectedCharacter] = useState("");
+  const [characterScheduleData, setCharacterScheduleData] = useState(null);
 
   useEffect(() => {
-    // 사용자의 캐릭터 목록을 가져옵니다.
+    // JWT Token 가져오기
+    const JWT_TOKEN = localStorage.getItem("token");
+
     axios
-      .get("/api/character/get-chars", {
+      .get(`${API_URL}/api/character/get-chars`, {
         headers: {
           Authorization: `Bearer ${JWT_TOKEN}`,
         },
       })
       .then((response) => {
-        console.log(response.data);
         setCharacterSchedule(response.data);
-        axios
-          .get(
-            `https://developer-lostark.game.onstove.com/characters/우산구름떡/siblings`,
-            {
-              headers: {
-                Authorization: `Bearer ${API_KEY}`,
-              },
-            }
-          )
-          .then((response) => {
-            console.log(response.data);
-          });
       });
 
-    // 사용자 스케줄 정보를 가져옵니다.
     axios
-      .get("/api/schedule/get/user-schedules", {
+      .get(`${API_URL}/api/schedule/get/user-schedules`, {
         headers: {
           Authorization: `Bearer ${JWT_TOKEN}`,
         },
         params: {
-          characterIds: characterSchedule.map((data) => data.id), // 모든 캐릭터 ID를 가져오는거
+          characterIds: characterSchedule.map((data) => data.id),
         },
       })
       .then((response) => {
@@ -59,52 +47,81 @@ const Category3 = () => {
       });
   }, []);
 
-  const handleScheduleCheck = (e) => {
-    e.preventDefault();
-
-    let body = {
-      id: characterId,
-      valtan: true,
-      biakiss: true,
-      akkan: true,
-    };
-
-    axios
-      .post("/api/schedule/check", body, {
-        headers: {
-          Authorization: `Bearer ${JWT_TOKEN}`,
-        },
-      })
-      .then((response) => {
-        setScheduleCheckResult("Check Success");
-        window.location.reload();
-      })
-      .catch((error) => {
-        setScheduleCheckResult("Check Failed");
-      });
+  const getCharacterSiblings = async (characterName) => {
+    try {
+      const response = await axios.get(
+        `https://developer-lostark.game.onstove.com/characters/우산구름떡/siblings`,
+        {
+          headers: {
+            Authorization: `Bearer ${API_KEY}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching character siblings:", error);
+      return null;
+    }
   };
 
-  const handleScheduleReset = () => {
+  const handleScheduleCheck = async (e) => {
+    e.preventDefault();
+
+    try {
+      let body = {
+        id: characterId,
+        valtan: true,
+        biakiss: true,
+        akkan: true,
+      };
+
+      await axios.post(`${API_URL}/api/schedule/check`, body, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      setScheduleCheckResult("Check Success");
+      window.location.reload();
+    } catch (error) {
+      console.error("Error checking schedule:", error);
+      setScheduleCheckResult("Check Failed");
+    }
+  };
+
+  const handleScheduleReset = async () => {
     if (!window.confirm("정말 초기화 하시겠습니까?")) {
       alert("초기화가 취소되었습니다.");
+      return;
+    }
+
+    try {
+      await axios.post(
+        `${API_URL}/api/schedule/reset`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      setResetResult("Reset Success");
+      alert("초기화를 성공하셨습니다.");
+    } catch (error) {
+      console.error("Error resetting schedule:", error);
+      setResetResult("Reset Failed");
+    }
+  };
+
+  const handleGetCharacterSchedule = async () => {
+    if (!selectedCharacter) return;
+
+    const siblingsData = await getCharacterSiblings(selectedCharacter);
+    if (siblingsData) {
+      setCharacterScheduleData(siblingsData);
     } else {
-      axios
-        .post(
-          "/api/schedule/reset",
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${JWT_TOKEN}`,
-            },
-          }
-        )
-        .then((response) => {
-          setResetResult("Reset Success");
-          alert("초기화를 성공하셨습니다.");
-        })
-        .catch((error) => {
-          setResetResult("Reset Failed");
-        });
+      setCharacterScheduleData(null);
     }
   };
 
@@ -162,6 +179,28 @@ const Category3 = () => {
       <p>{scheduleCheckResult}</p>
       <button onClick={handleScheduleReset}>스케줄 초기화</button>
       <p>{resetResult}</p>
+
+      {/* 스케줄 조회 */}
+      <div>
+        <h2>캐릭터 스케줄 조회</h2>
+        <input
+          type="text"
+          placeholder="캐릭터 이름"
+          value={selectedCharacter}
+          onChange={(e) => setSelectedCharacter(e.target.value)}
+        />
+        <button onClick={handleGetCharacterSchedule}>조회</button>
+        {characterScheduleData && (
+          <div>
+            <h3>{characterScheduleData.CharacterName} 스케줄</h3>
+            <p>서버: {characterScheduleData.ServerName}</p>
+            <p>레벨: {characterScheduleData.CharacterLevel}</p>
+            <p>직업: {characterScheduleData.CharacterClassName}</p>
+            <p>평균 아이템 레벨: {characterScheduleData.ItemAvgLevel}</p>
+            <p>최대 아이템 레벨: {characterScheduleData.ItemMaxLevel}</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
