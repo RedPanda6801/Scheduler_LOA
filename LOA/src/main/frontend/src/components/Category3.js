@@ -180,7 +180,7 @@ const Category3 = () => {
           value={characterId}
           onChange={(e) => setCharacterId(e.target.value)}
         />
-        <button type="submit">스케줄 체킹</button>
+        <button type="submit">스케쥴 체킹</button>
       </form>
       <p>{scheduleCheckResult}</p>
       <button onClick={handleScheduleReset}>스케줄 초기화</button>
