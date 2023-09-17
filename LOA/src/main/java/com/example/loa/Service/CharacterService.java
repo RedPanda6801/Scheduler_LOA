@@ -6,6 +6,7 @@ import com.example.loa.Entity.CharacterInfo;
 import com.example.loa.Entity.Schedule;
 import com.example.loa.Entity.User;
 import com.example.loa.Repository.CharacterInfoRepository;
+import com.example.loa.Repository.ScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,8 @@ import java.util.Optional;
 
 @Service
 public class CharacterService {
+    @Autowired
+    ScheduleRepository scheduleRepository;
     @Autowired
     private CharacterInfoRepository characterInfoRepository;
     @Autowired
@@ -34,6 +37,27 @@ public class CharacterService {
             return response;
         }
         User user = userTmp.get();
+
+        // 기존에 가지고 있는 캐릭터가 있으면 전부 삭제
+        try{
+            List<CharacterInfo> trashChar = characterInfoRepository.findAllByUserId(id);
+            // 배열에 캐릭터가 검색되어 있으면 삭제
+            if (trashChar.size() > 0) {
+                for (CharacterInfo character : trashChar) {
+                    // 캐릭터에 연결된 스케줄을 찾아 삭제
+                    Schedule deleteData = character.getSchedule();
+                    // 연관관계 삭제
+                    character.setSchedule(null);
+                    // 데이터 삭제
+                    scheduleRepository.delete(deleteData);
+                    characterInfoRepository.delete(character);
+                }
+            }
+        }catch(Exception e){
+            System.out.println(String.format("[Error] %s",e));
+            response.setResponse("Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
+            return response;
+        }
 
         // 각 캐릭터에 user 매핑
         List<CharacterInfo> characters = new ArrayList<>();

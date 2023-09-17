@@ -115,7 +115,7 @@ const Category3 = () => {
   const getCharacterSiblings = async (characterName) => {
     try {
       const response = await axios.get(
-        `https://developer-lostark.game.onstove.com/characters/우산구름떡/siblings`,
+        `https://developer-lostark.game.onstove.com/characters/${characterName}/siblings`,
         {
           headers: {
             Authorization: `Bearer ${API_KEY}`,
@@ -198,13 +198,34 @@ const Category3 = () => {
         }
       })
 
-      console.log(requestArr);
+      // 6캐릭터가 넘으면 예외처리
+      if(requestArr.length > 6){
+        alert("6 캐릭터만 관리 가능합니다.");
+        return;
+      }
+      const initRes = await axios.post("/api/character/init",
+        requestArr,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      )
+      if(initRes.status === 201){
+        alert("초기화 성공");
+        window.location.reload();
+      }
+      else{
+        alert("초기화 실패");
+        setShow(false);
+      }
     }
   }
 
   const handleInitCheckbox = (e) => {
     selected[e.target.id -1] = e.target.checked;
   }
+
   const handleGetCharacterSchedule = async () => {
     if (!selectedCharacter) return;
 
@@ -232,7 +253,7 @@ const Category3 = () => {
             {
               Array.isArray(serverCharacters) ? (
                 serverCharacters.map((data, index) => {
-                  console.log(data);
+
                   return(
                     <Form.Check // prettier-ignore
                       id={index+1}
@@ -304,8 +325,6 @@ const Category3 = () => {
         />
         <button type="submit">스케쥴 체킹</button>
       </form>
-      <p>{scheduleCheckResult}</p>
-      <button onClick={handleScheduleReset}>스케줄 초기화</button>
       <p>{resetResult}</p>
 
       {/* 스케줄 조회 */}

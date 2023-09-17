@@ -42,6 +42,7 @@ const SignIn = () => {
     setIsLoggedIn(false);
   };
 
+  // *예외* 로그인 시에 페이지가 넘어가면 LoggedIn 값이 초기화되어 로그인 페이지가 다시 뜸 *예외* //
   return (
     <div>
       <h2>Sign In</h2>
