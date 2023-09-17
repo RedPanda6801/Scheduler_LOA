@@ -8,7 +8,7 @@ const Category4 = () => {
   const [selectedCrewOnes, setSelectedCrewOnes] = useState([]);
   const [selectedCrewMember, setSelectedCrewMember] = useState("");
   const [userCrews, setUserCrews] = useState([]);
-  const [selectedCrewInfo, setSelectedCrewInfo] = useState(null); // New state to store selected crew info
+  const [selectedCrewInfo, setSelectedCrewInfo] = useState(null);
 
   useEffect(() => {
     axios
@@ -34,11 +34,17 @@ const Category4 = () => {
         }
       )
       .then((response) => {
-        setUserCreatedCrew("Crew created");
-        alert("crew 생성");
+        if (response.data === "Create Success") {
+          setUserCreatedCrew("Crew created");
+          alert("크루가 성공적으로 생성되었습니다.");
+        } else {
+          setUserCreatedCrew("Crew creation failed");
+          alert("크루 생성에 실패하였습니다.");
+        }
       })
       .catch((error) => {
         setUserCreatedCrew("Crew creation failed");
+        alert("크루 생성에 실패하였습니다.");
       });
   };
 
@@ -50,7 +56,6 @@ const Category4 = () => {
     });
     setSelectedCrewOnes(response.data);
 
-    // Store selected crew info when a crew is selected
     setSelectedCrewInfo(response.data);
   };
 
@@ -68,7 +73,6 @@ const Category4 = () => {
         ))}
       </select>
 
-      {/* Display selected crew information */}
       {selectedCrewInfo && <ContentStatus crew={selectedCrewInfo} />}
     </div>
   );
@@ -93,12 +97,9 @@ const ContentStatus = ({ crew }) => {
   return (
     <div>
       <h3>{crew[0].crewName} 컨텐츠 현황</h3>
-      {/* Render crew information here */}
       {crew.map((crewone, index) => (
         <div key={index}>
           <h4>{crewone.mainCharacter} 정보</h4>
-          {/* 정보 넣을건데 디자인은 나중에 */}
-          {/* <p>Valtan: {crewone.valtan ? "T" : "F"}</p> */}
         </div>
       ))}
     </div>
