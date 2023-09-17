@@ -2,18 +2,77 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Accordion from "react-bootstrap/Accordion";
 import { Form, Col } from "react-bootstrap";
+// 모달 bootstrap import
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
 const API_KEY =
   "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IktYMk40TkRDSTJ5NTA5NWpjTWk5TllqY2lyZyIsImtpZCI6IktYMk40TkRDSTJ5NTA5NWpjTWk5TllqY2lyZyJ9.eyJpc3MiOiJodHRwczovL2x1ZHkuZ2FtZS5vbnN0b3ZlLmNvbSIsImF1ZCI6Imh0dHBzOi8vbHVkeS5nYW1lLm9uc3RvdmUuY29tL3Jlc291cmNlcyIsImNsaWVudF9pZCI6IjEwMDAwMDAwMDAwMjkxMDMifQ.pzyW3e9arSfzt83LULmVxs0RvBqlm27P1meE6KikBZW7JonoCYxzU7_rFRg8Kmn4Z7qVZ5u7Rn4DYtwZjtruP4dlTmOI229lpsCFs9tBj81rcs1sVD-zzep0EEx9V0XnEgQv_YIKEpEYtR7N06-9M4sFHqj-ScjUllly43RTyXa1vGyKwtHNhfwjXmYPu9oIGIjsdKe-a2aGZStuh6aSYVcFF2-KXcfwlHbTwxulYPn78GQkl6JfXOb6QzSxqum-xoK0XGiJz7GLM4X_GmyBu8PDvfe_eT8hB6P0Xib0VP6j4jKPmbX9GInrlj92IKgWVjLb3WHLHA07a1GiBXGH-A";
+
+const LOA_URL = "https://developer-lostark.game.onstove.com/";
+
 const Category3 = () => {
   const [scheduleCheckResult, setScheduleCheckResult] = useState("");
   const [characterSchedule, setCharacterSchedule] = useState([]);
   const [resetResult, setResetResult] = useState("");
   const [characterId, setCharacterId] = useState("");
   const [userSchedules, setUserSchedules] = useState([]);
-
+  const [serverCharacters, setServerCharacters] = useState([]);
   const [selectedCharacter, setSelectedCharacter] = useState("");
   const [characterScheduleData, setCharacterScheduleData] = useState(null);
+  // Modal State
+  const [show, setShow] = useState(false);
+  const [selected, setSelected] = useState([]);
+  const myChar = localStorage.getItem("character");
+  const server = localStorage.getItem("server");
+  const handleClose = () =>{
+    setShow(false);
+  }
+  const handleShow = () => {
+    setShow(true);
+  }
+
+  const getMyServerChar = async () => {
+    try {
+      const apiRes = await axios.get(
+        `${LOA_URL}/characters/${myChar}/siblings`, {
+          headers: {
+            Authorization: `Bearer ${API_KEY}`
+          }
+        }
+      )
+      // 데이터가 없으면 사용자의 메인 캐릭터를 수정해야함
+      if(apiRes.data === null){
+        alert("대표캐릭터가 없거나 잘못된 캐릭터입니다. 개인정보를 수정해주세요");
+        setShow(false);
+      }else {
+        // 받은 데이터 중 서버 데이터 거르기
+        let charArr = [];
+        let selectedState = [];
+
+        apiRes.data.map((data) =>{
+          if(data.ServerName === server){
+            // 레벨값 float으로 넣기
+            data.ItemAvgLevel = parseFloat(data.ItemAvgLevel.replace(',',''));
+            // 셀렉트박스 감지할 state
+            selectedState.push(false);
+            charArr.push(data);
+          }
+        })
+        // 설정한 서버가 잘못되었거나 서버에 캐릭터가 없는 경우
+        if(charArr.length === 0){
+          alert("설정하신 서버에 캐릭터가 없습니다. 개인정보를 수정해주세요.");
+          setShow(false);
+        }else{
+          // state에 넣기
+          setSelected(selectedState);
+          setServerCharacters(charArr);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     // JWT Token 가져오기
@@ -120,6 +179,32 @@ const Category3 = () => {
     }
   };
 
+  const handleScheduleInit = async (e) => {
+    e.preventDefault();
+    if(window.confirm("해당 캐릭터들을 선택하시겠습니까?")) {
+
+      let requestArr = [];
+      serverCharacters.map((data, index) => {
+        if(selected[index]){
+          let requestForm = {
+            charName : "",
+            level : 0.0,
+            job : ""
+          }
+          requestForm.charName = data.CharacterName;
+          requestForm.level = data.ItemAvgLevel;
+          requestForm.job = data.CharacterClassName;
+          requestArr.push(requestForm);
+        }
+      })
+
+      console.log(requestArr);
+    }
+  }
+
+  const handleInitCheckbox = (e) => {
+    selected[e.target.id -1] = e.target.checked;
+  }
   const handleGetCharacterSchedule = async () => {
     if (!selectedCharacter) return;
 
@@ -134,6 +219,43 @@ const Category3 = () => {
   return (
     <div>
       <div>개인 컨텐츠</div>
+      <Button variant="primary" onClick={handleShow}>
+        캐릭터 불러오기
+      </Button>
+      <Modal show={show} onHide={handleClose}>
+        <Form onSubmit={handleScheduleInit}>
+        <Modal.Header closeButton>
+          <Modal.Title>Modal heading</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Button variant="primary" onClick={getMyServerChar}>내 대표 캐릭터로 조회하기</Button>
+            {
+              Array.isArray(serverCharacters) ? (
+                serverCharacters.map((data, index) => {
+                  console.log(data);
+                  return(
+                    <Form.Check // prettier-ignore
+                      id={index+1}
+                      type={"checkbox"}
+                      key={index}
+                      label={`${data.CharacterName} // ${data.ItemAvgLevel} // ${data.CharacterClassName}`}
+                      onChange={handleInitCheckbox}
+                    />
+                  )
+                })
+              ) : "숙제 관리할 캐릭터를 골라주세요"
+            }
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleScheduleInit}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+        </Form>
+      </Modal>
       <Accordion defaultActiveKey="0">
         {Array.isArray(characterSchedule) ? (
           characterSchedule.map((data) => {

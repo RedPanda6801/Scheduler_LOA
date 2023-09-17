@@ -94,7 +94,7 @@ public class UserService {
             return response;
         }
         String token = jwtService.makeJwtToken(user.getId(), user.getCharName());
-
+        token = String.format("%s %s %s", token, user.getCharName(), user.getServer());
         // Model에 token을 같이 넘겨주어 프론트에서 localStorage에 저장하게끔 구현
         response.setResponse("Login Success", token, HttpStatus.OK);
         return response;

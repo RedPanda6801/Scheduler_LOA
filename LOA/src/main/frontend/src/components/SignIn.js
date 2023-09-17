@@ -13,7 +13,10 @@ const SignIn = () => {
         password,
       });
       alert("로그인 성공");
-      localStorage.setItem("token", response.data.data);
+      const result = response.data.data.split(" ");
+      localStorage.setItem("token", result[0]);
+      localStorage.setItem("character", result[1]);
+      localStorage.setItem("server", result[2]);
     } catch (error) {
       if(error.response.status === 400){
         if(error.response.data.message === "Null Error"){
