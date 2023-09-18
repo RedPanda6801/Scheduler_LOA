@@ -25,6 +25,7 @@ const Category3 = () => {
   const [selected, setSelected] = useState([]);
   const myChar = localStorage.getItem("character");
   const server = localStorage.getItem("server");
+
   const handleClose = () =>{
     setShow(false);
   }
@@ -131,13 +132,19 @@ const Category3 = () => {
 
   const handleScheduleCheck = async (e) => {
     e.preventDefault();
-
+    const pk = e.target.getAttribute("pk");
+    const checkboxs = e.target;
     try {
       let body = {
-        id: characterId,
-        valtan: true,
-        biakiss: true,
-        akkan: true,
+        id: pk,
+        valtan: checkboxs[0].value,
+        biakiss: checkboxs[1].value,
+        kuke : checkboxs[2].value,
+        abrel:checkboxs[3].value,
+        akkan: checkboxs[4].value,
+        kkayangel: checkboxs[5].value,
+        sanghatop: checkboxs[6].value,
+        kamen: checkboxs[7].value,
       };
 
       await axios.post(`/api/schedule/check`, body, {
@@ -280,6 +287,7 @@ const Category3 = () => {
       <Accordion defaultActiveKey="0">
         {Array.isArray(characterSchedule) ? (
           characterSchedule.map((data) => {
+            const pk = data.scheduleDto.id;
             const userSchedule = userSchedules.find(
               (schedule) => schedule.id === data.id
             );
@@ -289,23 +297,24 @@ const Category3 = () => {
                   {data.charName} : {data.level} {data.job}
                 </Accordion.Header>
                 <Accordion.Body>
-                  <Form>
+                  <Form onSubmit={handleScheduleCheck} pk={pk}>
                     <div className="character-body-div">
                       {Object.keys(data.scheduleDto).map((key) => {
-                        if (key === "id") return null;
+                        if (key === "id")return;
                         const isChecked = userSchedule
                           ? userSchedule[key]
                           : false;
                         return (
                           <Form.Group key={key} as={Col} controlId={key}>
-                            <Form.Check
-                              type="checkbox"
-                              label={key}
-                              defaultChecked={isChecked}
+                            {key} <input
+                              width="20px"
+                              id={key.id}
+                              type="number"
                             />
                           </Form.Group>
                         );
                       })}
+                      <Button type="submit" ></Button>
                     </div>
                   </Form>
                 </Accordion.Body>
