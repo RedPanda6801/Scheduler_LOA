@@ -27,8 +27,6 @@ public class ScheduleDto {
 
     private Integer kamen;
 
-    private Integer userId;
-
     public static ScheduleDto toDto(Schedule entity) {
         return ScheduleDto.builder()
                 .id(entity.getId())
