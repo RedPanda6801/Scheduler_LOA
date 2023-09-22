@@ -182,6 +182,7 @@ const Category3 = () => {
 
       setResetResult("Reset Success");
       alert("초기화를 성공하셨습니다.");
+      window.location.reload();
     } catch (error) {
       console.error("Error resetting schedule:", error);
       setResetResult("Reset Failed");
@@ -286,6 +287,7 @@ const Category3 = () => {
         </Modal.Footer>
         </Form>
       </Modal>
+      <Button variant="secondary" onClick={handleScheduleReset}>로요일 초기화</Button>
       <Accordion defaultActiveKey="0">
         {Array.isArray(characterSchedule) ? (
           characterSchedule.map((data) => {
@@ -341,7 +343,7 @@ const Category3 = () => {
       </form>
       <p>{resetResult}</p>*/}
 
-      {/* 스케줄 조회 */}
+      {/* 이 스케줄 조회도 우선은 필요 없어 보인다. => 위에서 조회 및 체크, 초기설정 다 하기 때문
       <div>
         <h2>캐릭터 스케줄 조회</h2>
         <input
@@ -362,6 +364,7 @@ const Category3 = () => {
           </div>
         )}
       </div>
+      */}
     </div>
   );
 };
