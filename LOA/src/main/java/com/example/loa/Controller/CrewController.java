@@ -43,7 +43,7 @@ public class CrewController {
         if(token == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         Integer id = Integer.parseInt(token.get("id").toString());
         // Service 호출
-        ResponseDto response = crewService.addCrew(id, dto.getName());
+        ResponseDto response = crewService.addCrew(id, dto);
         // 응답값 처리
         if(response.getStatus() == HttpStatus.BAD_REQUEST){
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
@@ -114,7 +114,6 @@ public class CrewController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
 
     // 크루 인원 추가
     @PostMapping("/api/crew/add-member")

@@ -249,9 +249,9 @@ const Category3 = () => {
 
   return (
     <div>
-      <div>개인 컨텐츠</div>
+      <h3>개인 컨텐츠 관리</h3>
       <Button variant="primary" onClick={handleShow}>
-        캐릭터 불러오기
+        캐릭터 추가
       </Button>
       <Modal show={show} onHide={handleClose}>
         <Form onSubmit={handleScheduleInit}>
@@ -279,10 +279,10 @@ const Category3 = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
-            Close
+            닫기
           </Button>
-          <Button variant="primary" onClick={handleScheduleInit}>
-            Save Changes
+          <Button variant="primary" type="submit">
+            캐릭터 추가
           </Button>
         </Modal.Footer>
         </Form>

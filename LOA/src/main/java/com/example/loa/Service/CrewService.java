@@ -1,9 +1,6 @@
 package com.example.loa.Service;
 
-import com.example.loa.Dto.CharacterInfoDto;
-import com.example.loa.Dto.CrewApplyDto;
-import com.example.loa.Dto.CrewMemberDto;
-import com.example.loa.Dto.ResponseDto;
+import com.example.loa.Dto.*;
 import com.example.loa.Entity.Crew;
 import com.example.loa.Entity.CrewApply;
 import com.example.loa.Entity.CrewMember;
@@ -38,9 +35,6 @@ public class CrewService {
     UserService userService;
 
     public Boolean isCrew(String crewName){
-        // 응답값 객체 생성
-        ResponseDto response = new ResponseDto();
-
         // 크루 찾기
         Optional<Crew> crewTmp = crewRepository.findCrewByName(crewName);
         if(!crewTmp.isPresent()){
@@ -50,12 +44,12 @@ public class CrewService {
         return true;
     }
 
-    public ResponseDto addCrew(Integer id, String crewName){
+    public ResponseDto addCrew(Integer id, CrewDto dto){
         // 응답값 객체 생성
         ResponseDto response = new ResponseDto();
 
         // 크루 이름 중복 확인
-        Boolean isCrew = isCrew(crewName);
+        Boolean isCrew = isCrew(dto.getName());
         if(isCrew){
             System.out.println("[Error] Crew Name Overlapped");
             response.setResponse("Crew Name Overlapped", HttpStatus.BAD_REQUEST);
@@ -80,10 +74,11 @@ public class CrewService {
             return response;
         }
 
-        // 캐릭터 정보 저장
+        // 크루 정보 저장
         try{
             Crew crew = new Crew();
-            crew.setName(crewName);
+            crew.setName(dto.getName());
+            crew.setInfo(dto.getInfo());
             crew.setUser(user);
             crewRepository.save(crew);
             // 크루 멤버에 인원 추가
