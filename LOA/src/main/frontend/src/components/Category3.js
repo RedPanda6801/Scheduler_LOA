@@ -135,16 +135,17 @@ const Category3 = () => {
     const pk = e.target.getAttribute("pk");
     const checkboxs = e.target;
     try {
+      // 들어온 값이 있고 0보다 크면 값 입력
       let body = {
         id: pk,
-        valtan: checkboxs[0].value,
-        biakiss: checkboxs[1].value,
-        kuke : checkboxs[2].value,
-        abrel:checkboxs[3].value,
-        akkan: checkboxs[4].value,
-        kkayangel: checkboxs[5].value,
-        sanghatop: checkboxs[6].value,
-        kamen: checkboxs[7].value,
+        valtan: checkboxs[0].value > 0  && checkboxs[0].value !== "" ? checkboxs[0].value : null,
+        biakiss: checkboxs[1].value > 0 && checkboxs[1].value !== "" ? checkboxs[1].value : 0,
+        kuke : checkboxs[2].value > 0 && checkboxs[2].value !== "" ? checkboxs[2].value : 0,
+        abrel:checkboxs[3].value > 0 && checkboxs[3].value !== "" ? checkboxs[3].value : 0,
+        akkan: checkboxs[4].value > 0 && checkboxs[4].value !== "" ? checkboxs[4].value : 0,
+        kkayangel: checkboxs[5].value > 0 && checkboxs[5].value !== "" ? checkboxs[5].value : 0,
+        sanghatop: checkboxs[6].value > 0 && checkboxs[6].value !== "" ? checkboxs[6].value : 0,
+        kamen: checkboxs[7].value > 0 && checkboxs[7].value !== "" ? checkboxs[7].value : 0,
       };
 
       await axios.post(`/api/schedule/check`, body, {
@@ -154,6 +155,7 @@ const Category3 = () => {
       });
 
       setScheduleCheckResult("Check Success");
+      alert("수정되었습니다.");
       window.location.reload();
     } catch (error) {
       console.error("Error checking schedule:", error);
@@ -180,6 +182,7 @@ const Category3 = () => {
 
       setResetResult("Reset Success");
       alert("초기화를 성공하셨습니다.");
+      window.location.reload();
     } catch (error) {
       console.error("Error resetting schedule:", error);
       setResetResult("Reset Failed");
@@ -246,9 +249,9 @@ const Category3 = () => {
 
   return (
     <div>
-      <div>개인 컨텐츠</div>
+      <h3>개인 컨텐츠 관리</h3>
       <Button variant="primary" onClick={handleShow}>
-        캐릭터 불러오기
+        캐릭터 추가
       </Button>
       <Modal show={show} onHide={handleClose}>
         <Form onSubmit={handleScheduleInit}>
@@ -276,14 +279,15 @@ const Category3 = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
-            Close
+            닫기
           </Button>
-          <Button variant="primary" onClick={handleScheduleInit}>
-            Save Changes
+          <Button variant="primary" type="submit">
+            캐릭터 추가
           </Button>
         </Modal.Footer>
         </Form>
       </Modal>
+      <Button variant="secondary" onClick={handleScheduleReset}>로요일 초기화</Button>
       <Accordion defaultActiveKey="0">
         {Array.isArray(characterSchedule) ? (
           characterSchedule.map((data) => {
@@ -309,6 +313,7 @@ const Category3 = () => {
                             {key} <input
                               width="20px"
                               id={key.id}
+                              placeholder={data.scheduleDto[key]}
                               type="number"
                             />
                           </Form.Group>
@@ -325,7 +330,9 @@ const Category3 = () => {
           <p>Check to Login</p>
         )}
       </Accordion>
-      <form onSubmit={handleScheduleCheck}>
+
+      {/* 안쓰는 코드*/}
+      {/*<form onSubmit={handleScheduleCheck}>
         <input
           type="text"
           placeholder="check Character's Id"
@@ -334,9 +341,9 @@ const Category3 = () => {
         />
         <button type="submit">스케쥴 체킹</button>
       </form>
-      <p>{resetResult}</p>
+      <p>{resetResult}</p>*/}
 
-      {/* 스케줄 조회 */}
+      {/* 이 스케줄 조회도 우선은 필요 없어 보인다. => 위에서 조회 및 체크, 초기설정 다 하기 때문
       <div>
         <h2>캐릭터 스케줄 조회</h2>
         <input
@@ -357,6 +364,7 @@ const Category3 = () => {
           </div>
         )}
       </div>
+      */}
     </div>
   );
 };

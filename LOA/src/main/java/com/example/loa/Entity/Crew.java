@@ -23,6 +23,8 @@ public class Crew {
 
     private String name;
 
+    private String info;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="head")
@@ -38,6 +40,7 @@ public class Crew {
         return Crew.builder()
                 .name(dto.getName())
                 .user(user)
+                .info(dto.getInfo())
                 .build();
     }
 }
