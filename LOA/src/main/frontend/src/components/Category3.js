@@ -135,16 +135,17 @@ const Category3 = () => {
     const pk = e.target.getAttribute("pk");
     const checkboxs = e.target;
     try {
+      // 들어온 값이 있고 0보다 크면 값 입력
       let body = {
         id: pk,
-        valtan: checkboxs[0].value,
-        biakiss: checkboxs[1].value,
-        kuke : checkboxs[2].value,
-        abrel:checkboxs[3].value,
-        akkan: checkboxs[4].value,
-        kkayangel: checkboxs[5].value,
-        sanghatop: checkboxs[6].value,
-        kamen: checkboxs[7].value,
+        valtan: checkboxs[0].value > 0  && checkboxs[0].value !== "" ? checkboxs[0].value : null,
+        biakiss: checkboxs[1].value > 0 && checkboxs[1].value !== "" ? checkboxs[1].value : 0,
+        kuke : checkboxs[2].value > 0 && checkboxs[2].value !== "" ? checkboxs[2].value : 0,
+        abrel:checkboxs[3].value > 0 && checkboxs[3].value !== "" ? checkboxs[3].value : 0,
+        akkan: checkboxs[4].value > 0 && checkboxs[4].value !== "" ? checkboxs[4].value : 0,
+        kkayangel: checkboxs[5].value > 0 && checkboxs[5].value !== "" ? checkboxs[5].value : 0,
+        sanghatop: checkboxs[6].value > 0 && checkboxs[6].value !== "" ? checkboxs[6].value : 0,
+        kamen: checkboxs[7].value > 0 && checkboxs[7].value !== "" ? checkboxs[7].value : 0,
       };
 
       await axios.post(`/api/schedule/check`, body, {
@@ -154,6 +155,7 @@ const Category3 = () => {
       });
 
       setScheduleCheckResult("Check Success");
+      alert("수정되었습니다.");
       window.location.reload();
     } catch (error) {
       console.error("Error checking schedule:", error);
@@ -309,6 +311,7 @@ const Category3 = () => {
                             {key} <input
                               width="20px"
                               id={key.id}
+                              placeholder={data.scheduleDto[key]}
                               type="number"
                             />
                           </Form.Group>
@@ -325,7 +328,9 @@ const Category3 = () => {
           <p>Check to Login</p>
         )}
       </Accordion>
-      <form onSubmit={handleScheduleCheck}>
+
+      {/* 안쓰는 코드*/}
+      {/*<form onSubmit={handleScheduleCheck}>
         <input
           type="text"
           placeholder="check Character's Id"
@@ -334,7 +339,7 @@ const Category3 = () => {
         />
         <button type="submit">스케쥴 체킹</button>
       </form>
-      <p>{resetResult}</p>
+      <p>{resetResult}</p>*/}
 
       {/* 스케줄 조회 */}
       <div>
