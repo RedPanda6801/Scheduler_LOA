@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import {Form, FormText} from "react-bootstrap";
+import {Form, Navbar, Container, Accordion, ListGroup, Table} from "react-bootstrap";
+import AccordionBody from "react-bootstrap/AccordionBody";
 
 const JWT_TOKEN = localStorage.getItem("token");
 
@@ -24,7 +25,7 @@ const Category4 = () => {
       })
       .then((response) => {
         console.log(response.data);
-        setUserCrews(response.data);
+        setUserCrews(response.data.data);
       });
   }, []);
 
@@ -71,6 +72,7 @@ const Category4 = () => {
   const handleShowCreateModal = () =>{
     setShowCreateModal(true);
   }
+
   const handleCloseCreateModal = () => {
     setShowCreateModal(false);
   }
@@ -105,6 +107,7 @@ const Category4 = () => {
       console.log(error);
     }
   }
+
   const handleCrewSelect = async (crew) => {
     const response = await axios.get(`/api/crew/get-members/${crew}`, {
       headers: {
@@ -116,6 +119,22 @@ const Category4 = () => {
     // Store selected crew info when a crew is selected
     setSelectedCrewInfo(response.data);
   };
+
+  const handleCrew = async (e) => {
+    try {
+      const response = await axios.get(`/api/crew/get-members/${e.target.innerText}`, {
+        headers: {
+          Authorization: `Bearer ${JWT_TOKEN}`,
+        },
+      });
+
+      const crewOnes = response.data.data;
+      console.log(crewOnes);
+      setSelectedCrewOnes(crewOnes);
+    }catch(error){
+      console.log(error);
+    }
+  }
 
   return (
     <div>
@@ -145,7 +164,73 @@ const Category4 = () => {
           </Modal.Footer>
       </Form>
       </Modal>
-      <CrewDiv crews={userCrews} onSelect={handleCrewSelect} />
+      {/*네비게이션 바로 새로 만들어봄*/}
+      <Navbar expand="lg" className="bg-body-tertiary">
+        <Container>
+          {
+            userCrews.map((crew, index) => {
+              return(
+                <Navbar.Brand key={index} onClick={handleCrew}>{crew}</Navbar.Brand>
+              );
+            })
+          }
+        </Container>
+      </Navbar>
+      <Accordion defaultActiveKey="0">
+      {
+        selectedCrewOnes.map((user,index) => {
+          console.log(user);
+          return(
+            <Accordion.Item eventKey={index}>
+              <Accordion.Header key={index}>{user[index].mainCharacter}</Accordion.Header>
+              <Accordion.Body>
+                {user.map((char) => {
+                    return(
+                      <Table>
+                        <thead>
+                          <tr>
+                            <th>
+                              닉네임
+                            </th>
+                            {
+                              Object.keys(char.scheduleDto).map((key) => {
+                                if(key === "id") return;
+                                return(
+                                  <th>
+                                    {key}
+                                  </th>
+                                )
+                              })
+                            }
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>
+                              {char.charName}
+                            </td>
+                            {
+                              Object.keys(char.scheduleDto).map((key) => {
+                                if(key === "id") return;
+                                return(
+                                  <td>
+                                    {char.scheduleDto[key]}
+                                  </td>
+                                )
+                              })
+                            }
+                          </tr>
+                        </tbody>
+                      </Table>
+                    )
+                  })}
+              </Accordion.Body>
+            </Accordion.Item>
+          )
+        })
+      }
+      </Accordion>
+      {/*<CrewDiv crews={userCrews} onSelect={handleCrewSelect} />
       <select onChange={(e) => setSelectedCrewMember(e.target.value)}>
         <option value="">크루원 선택</option>
         {selectedCrewOnes.map((crewone, index) => (
@@ -153,7 +238,7 @@ const Category4 = () => {
             {crewone[index].mainCharacter}
           </option>
         ))}
-      </select>
+      </select>*/}
 
       {/* Display selected crew information */}
       {selectedCrewInfo && <ContentStatus crew={selectedCrewInfo} />}
