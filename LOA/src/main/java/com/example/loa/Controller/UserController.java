@@ -23,11 +23,30 @@ public class UserController {
     private UserService userService;
     private JWTService jwtService = new JWTService();
 
+    @GetMapping("/api/user/check")
+    @ResponseBody
+    public ResponseEntity<ResponseDto> userCheck(HttpServletRequest request){
+        ResponseDto response = new ResponseDto();
+        // JWT 확인
+        Claims token = jwtService.jwtCheckFunc(request);
+        if(token == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        Integer id = Integer.parseInt(token.get("id").toString());
+        // Service 호출
+        Optional<User> userOptional = userService.getById(id);
+        // 유저가 존재하지 않으면 403 예외 처리
+        if(!userOptional.isPresent()){
+            response.setResponse("User Not Logged In", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+        }else{
+            response.setResponse("User Already Logged In", HttpStatus.OK);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+    }
+
     // User 단일 조회
     @GetMapping("/api/user/getUser/{id}")
     @ResponseBody
-    public UserDto getUser(@PathVariable Integer id){
-
+    public UserDto getUser(HttpServletRequest request, @PathVariable Integer id){
         Optional<User> userOptional = userService.getById(id);  // DB에서 id로 검색
 
         if(!userOptional.isPresent()) return null;  // 비어있으면 null 리턴
